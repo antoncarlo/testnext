@@ -7,6 +7,44 @@
 
 TESTNEXT è una piattaforma completa per la tokenizzazione di portafogli assicurativi, che integra l'applicazione web completa di nextblock-re-engine con l'infrastruttura completa di NEXTBLOCK-RE. La piattaforma permette agli investitori di guadagnare rendimenti attraverso asset assicurativi tokenizzati, operando su un'architettura dual-chain (Base + Solana) con un sistema di punti e rewards off-chain.
 
+## Quick Start
+
+### Installazione
+
+```bash
+git clone https://github.com/antoncarlo/testnext.git
+cd testnext
+npm install
+```
+
+### Configurazione
+
+Copia il file `.env.example` in `.env` e configura le variabili:
+
+```bash
+cp .env.example .env
+```
+
+### Sviluppo Locale
+
+```bash
+npm run dev
+```
+
+L'applicazione sarà disponibile su `http://localhost:5173`
+
+### Build Produzione
+
+```bash
+npm run build
+```
+
+### Deploy su Vercel
+
+```bash
+vercel deploy --prod
+```
+
 ## Architettura
 
 ### Blockchain Layer
@@ -45,38 +83,32 @@ TESTNEXT è una piattaforma completa per la tokenizzazione di portafogli assicur
 
 ```
 testnext/
-├── contracts-base/          # Smart contracts Solidity per Base
-│   ├── src/                 # File sorgenti dei contratti
-│   ├── script/              # Script di deployment
-│   ├── test/                # File di test
-│   └── README.md
+├── src/                     # Codice sorgente React
+│   ├── components/          # Componenti riutilizzabili
+│   ├── pages/               # Pagine dell'applicazione
+│   ├── hooks/               # Custom hooks
+│   ├── config/              # Configurazioni
+│   └── lib/                 # Utilities e helpers
 │
-├── solana-program/          # Programma Rust per Solana
-│   ├── programs/            # Programma Anchor
-│   ├── scripts/             # Script di testing
-│   └── README.md
+├── public/                  # Asset statici
+├── server/                  # Backend tRPC
+├── supabase/                # Configurazione Supabase
+├── drizzle/                 # Schema database
 │
-├── backend-supabase/        # Backend off-chain
-│   ├── supabase/
-│   │   ├── functions/       # Edge Functions
-│   │   └── migrations/      # Migrazioni database
-│   ├── scripts/             # Script di setup
-│   └── README.md
+├── blockchain/              # Infrastruttura blockchain
+│   ├── contracts-base/      # Smart contracts Solidity per Base
+│   ├── solana-program/      # Programma Rust per Solana
+│   └── backend-supabase/    # Backend off-chain Supabase
 │
-├── frontend/                # Applicazione web completa
-│   ├── src/                 # Codice sorgente React
-│   │   ├── components/      # Componenti riutilizzabili
-│   │   ├── pages/           # Pagine dell'applicazione
-│   │   ├── hooks/           # Custom hooks
-│   │   └── lib/             # Utilities e helpers
-│   ├── public/              # Asset statici
-│   ├── supabase/            # Configurazione Supabase
-│   └── README.md
+├── docs/                    # Documentazione aggiuntiva
+│   ├── INTEGRATION_GUIDE.md
+│   ├── DEPLOYMENT_GUIDE.md
+│   └── API_DOCUMENTATION.md
 │
-└── docs/                    # Documentazione aggiuntiva
-    ├── INTEGRATION_GUIDE.md
-    ├── DEPLOYMENT_GUIDE.md
-    └── API_DOCUMENTATION.md
+├── package.json             # Dipendenze frontend
+├── vite.config.ts           # Configurazione Vite
+├── vercel.json              # Configurazione Vercel
+└── README.md                # Questo file
 ```
 
 ## Features
@@ -125,27 +157,38 @@ Gli utenti guadagnano punti basati sulla loro attività:
 | Database | PostgreSQL 15 |
 | RPC | QuickNode, Alchemy |
 
-## Quick Start
+## Environment Variables
 
-### Prerequisiti
+Crea un file `.env` con le seguenti variabili:
 
-- Node.js 18+
-- Rust e Anchor CLI
-- Foundry
-- Supabase CLI
-- Git
+```env
+# Supabase
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-### Clone Repository
+# Base Chain
+VITE_NETWORK=mainnet
+VITE_BASE_RPC_URL=https://mainnet.base.org
+VITE_VAULT_ADDRESS=your_vault_address
+VITE_STRATEGY_ADDRESS=your_strategy_address
+VITE_NAV_ORACLE_ADDRESS=your_nav_oracle_address
+VITE_KYC_WHITELIST_ADDRESS=your_kyc_whitelist_address
+VITE_CCTP_RECEIVER_ADDRESS=your_cctp_receiver_address
+VITE_BASE_USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 
-```bash
-git clone https://github.com/antoncarlo/testnext.git
-cd testnext
+# Solana
+VITE_SOLANA_NETWORK=mainnet-beta
+VITE_SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
+VITE_SOLANA_PROGRAM_ID=your_solana_program_id
+VITE_SOLANA_USDC_ADDRESS=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
 ```
 
-### Deploy Base Contracts
+## Deployment
+
+### Deploy Smart Contracts
 
 ```bash
-cd contracts-base
+cd blockchain/contracts-base
 forge install
 forge build
 forge script script/DeployTestnet.s.sol --rpc-url $BASE_SEPOLIA_RPC --broadcast
@@ -154,7 +197,7 @@ forge script script/DeployTestnet.s.sol --rpc-url $BASE_SEPOLIA_RPC --broadcast
 ### Deploy Solana Program
 
 ```bash
-cd solana-program
+cd blockchain/solana-program
 anchor build
 anchor deploy --provider.cluster devnet
 ```
@@ -162,42 +205,50 @@ anchor deploy --provider.cluster devnet
 ### Setup Backend
 
 ```bash
-cd backend-supabase
+cd blockchain/backend-supabase
 npm install
-cp .env.example .env
-# Modifica .env con la tua configurazione
 supabase start
 supabase db push
 supabase functions deploy
 ```
 
-### Setup Frontend
+### Deploy Frontend
+
+#### Vercel (Raccomandato)
 
 ```bash
-cd frontend
-npm install
-cp .env.example .env
-# Modifica .env con la tua configurazione
-npm run dev
+vercel deploy --prod
+```
+
+#### Netlify
+
+```bash
+netlify deploy --prod
+```
+
+#### Supabase
+
+```bash
+supabase deploy
 ```
 
 ## Documentazione
 
-- [Guida all'Integrazione](./docs/INTEGRATION_GUIDE.md)
-- [Guida al Deployment](./docs/DEPLOYMENT_GUIDE.md)
-- [Documentazione API](./docs/API_DOCUMENTATION.md)
-- [Contratti Base README](./contracts-base/README.md)
-- [Programma Solana README](./solana-program/README.md)
-- [Backend README](./backend-supabase/README.md)
+- [Integration Guide](./docs/INTEGRATION_GUIDE.md) - Guida all'integrazione completa
+- [Deployment Guide](./docs/DEPLOYMENT_GUIDE.md) - Guida al deployment
+- [Smart Contracts](./blockchain/contracts-base/README.md) - Documentazione contratti Base
+- [Solana Program](./blockchain/solana-program/README.md) - Documentazione programma Solana
+- [Backend](./blockchain/backend-supabase/README.md) - Documentazione backend
 
 ## Deployment Status
 
-| Componente | Testnet | Mainnet |
-|-----------|---------|---------|
-| Contratti Base | Ready | Pending |
-| Programma Solana | Ready | Pending |
-| Backend Supabase | Deployed | Pending |
-| Frontend | Completed | Pending |
+| Componente | Status | Environment |
+|-----------|--------|-------------|
+| Base Contracts | Ready | Testnet |
+| Solana Program | Ready | Devnet |
+| Supabase Backend | Ready | Production |
+| Frontend | Deployed | Vercel |
+| GitHub Repository | Public | Production |
 
 ## Security
 
@@ -220,8 +271,8 @@ Copyright (c) 2025 Anton Carlo Santoro
 
 - **Developer**: Anton Carlo Santoro
 - **Project**: TESTNEXT
-- **Website**: [To be configured]
-- **Email**: [To be configured]
+- **Repository**: https://github.com/antoncarlo/testnext
+- **Issues**: https://github.com/antoncarlo/testnext/issues
 
 ## Acknowledgments
 

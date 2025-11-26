@@ -79,3 +79,5 @@ bun.lockb
 *.tar.gz
 *.zip
 *.rar
+.vercel
+.env*.local

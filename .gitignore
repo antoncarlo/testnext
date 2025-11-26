@@ -52,7 +52,8 @@ typechain-types/
 # Foundry
 out/
 broadcast/
-lib/
+blockchain/contracts-base/lib/
+blockchain/solana-program/target/
 
 # Anchor
 .anchor/

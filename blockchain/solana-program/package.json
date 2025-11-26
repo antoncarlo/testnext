@@ -1,0 +1,44 @@
+{
+  "name": "onre-app",
+  "description": "OnRe application to purchase, schedule and redeem tokens",
+  "private": true,
+  "version": "0.0.9",
+  "type": "module",
+  "scripts": {
+    "anchor": "cd anchor && anchor",
+    "anchor-build": "cd anchor && anchor build && mkdir -p ../tests/fixtures && cp target/deploy/onreapp.so ../tests/fixtures/",
+    "anchor-localnet": "cd anchor && anchor localnet",
+    "anchor-test": "cd anchor && anchor test",
+    "set-program:dev": "cp ~/.config/solana/devHfQHgiFNifkLW49RCXpyTUZMyKuBNnFSbrQ8XsbX.json target/deploy/onreapp-keypair.json && anchor keys sync && anchor build",
+    "set-program:test": "cp ~/.config/solana/J24jWEosQc5jgkdPm3YzNgzQ54CqNKkhzKy56XXJsLo2.json target/deploy/onreapp-keypair.json && anchor keys sync && anchor build",
+    "set-program:prod": "cp ~/.config/solana/onreuGhHHgVzMWSkj2oQDLDtvvGvoepBPkqyaubFcwe.json target/deploy/onreapp-keypair.json && anchor keys sync && anchor build",
+    "transfer-usdc-v2": "tsx scripts/cross_chain_transfer/cctp_v2/transfer-v2.ts"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
+    "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
+    "@solana/spl-token": "0.4.14",
+    "@solana/web3.js": "^1.98.4",
+    "bs58": "^6.0.0",
+    "ethers": "^6.15.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "anchor-bankrun": "^0.5.0",
+    "borsh": "^2.0.0",
+    "dotenv": "^16.5.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.5.2",
+    "solana-bankrun": "^0.4.0",
+    "ts-jest": "^29.2.6",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "zx": "^8.6.0"
+  },
+  "overrides": {
+    "anchor-bankrun": {
+      "@coral-xyz/anchor": "^0.31.1"
+    }
+  }
+}

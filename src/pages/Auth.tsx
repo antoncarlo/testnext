@@ -23,6 +23,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
   const [walletLoadingStep, setWalletLoadingStep] = useState('');
+  const [hasAttemptedAuth, setHasAttemptedAuth] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [referralCode, setReferralCode] = useState('');
@@ -52,10 +53,11 @@ const Auth = () => {
 
   // Handle wallet authentication when wallet is connected
   useEffect(() => {
-    if (wallet && !user && !walletLoading) {
+    if (wallet && !user && !walletLoading && !hasAttemptedAuth) {
+      setHasAttemptedAuth(true);
       handleWalletAuth();
     }
-  }, [wallet]);
+  }, [wallet, user, walletLoading, hasAttemptedAuth]);
 
   const validateEmail = () => {
     try {
@@ -156,13 +158,26 @@ const Auth = () => {
 
       // Request signature
       try {
+        console.log('Requesting signature for chain:', chain);
+        console.log('Provider:', wallet.provider);
+        
         if (chain === 'base') {
           // Use EIP-1193 provider for EVM chains
           const provider = wallet.provider;
+          
+          // Convert message to hex for personal_sign
+          const hexMessage = '0x' + Array.from(new TextEncoder().encode(message))
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('');
+          
+          console.log('Calling personal_sign with params:', [hexMessage, connectedAddress]);
+          
           signature = await provider.request({
             method: 'personal_sign',
-            params: [message, connectedAddress],
+            params: [hexMessage, connectedAddress],
           });
+          
+          console.log('Signature received:', signature);
         } else {
           // For Solana (if supported by the wallet)
           const encodedMessage = new TextEncoder().encode(message);
@@ -171,6 +186,7 @@ const Auth = () => {
           signature = bs58.encode(signedMessage.signature);
         }
       } catch (signError: any) {
+        console.error('Signature error:', signError);
         if (signError.code === 4001 || signError.message?.includes('User rejected')) {
           throw new Error('Signature request rejected. Please approve the signature to continue.');
         }
@@ -191,6 +207,7 @@ const Auth = () => {
     } finally {
       setWalletLoading(false);
       setWalletLoadingStep('');
+      setHasAttemptedAuth(false);
     }
   };
 

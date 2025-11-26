@@ -1,0 +1,25 @@
+{
+  "name": "nextblock-backend-supabase",
+  "version": "1.0.0",
+  "description": "NextBlock Off-Chain Points System Backend on Supabase",
+  "author": "Anton Carlo Santoro",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "dev": "supabase functions serve",
+    "deploy": "supabase functions deploy",
+    "db:push": "supabase db push",
+    "db:reset": "supabase db reset",
+    "start": "supabase start",
+    "stop": "supabase stop",
+    "status": "supabase status"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "ethers": "^6.9.0"
+  }
+}

@@ -1,0 +1,10 @@
+project_id = "mxkdrdjbvhhwhstbocux"
+
+[functions.process-deposits]
+verify_jwt = false
+
+[functions.auth-wallet]
+verify_jwt = false
+
+[functions.update-defi-yields]
+verify_jwt = false

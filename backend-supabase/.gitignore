@@ -1,0 +1,38 @@
+# Author: Anton Carlo Santoro
+# Copyright: (c) 2025 Anton Carlo Santoro. All rights reserved.
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Supabase
+.branches
+.temp
+.vscode
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Build
+dist/
+build/

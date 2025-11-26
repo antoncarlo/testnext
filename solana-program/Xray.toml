@@ -1,0 +1,6 @@
+# Author: Anton Carlo Santoro
+# Copyright: (c) 2025 Anton Carlo Santoro. All rights reserved.
+
+[package]
+name = "nextblock-satellite"
+version = "0.1.0"

@@ -1,9 +1,16 @@
+/**
+ * Main Application Component with Web3-Onboard Integration
+ * Author: Anton Carlo Santoro
+ * Copyright: (c) 2025 Anton Carlo Santoro. All rights reserved.
+ */
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { WalletProvider } from "@/hooks/useWallet";
+import { Web3OnboardProvider } from '@web3-onboard/react';
+import { web3Onboard } from '@/config/web3-onboard';
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
@@ -29,8 +36,8 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <WalletProvider>
+    <Web3OnboardProvider web3Onboard={web3Onboard}>
+      <AuthProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -60,15 +67,20 @@ const App = () => (
                   <Deposit />
                 </ProtectedRoute>
               } />
-              <Route path="/admin" element={
-                <AdminRoute>
-                  <Admin />
-                </AdminRoute>
+              <Route path="/withdraw" element={
+                <ProtectedRoute>
+                  <Withdraw />
+                </ProtectedRoute>
               } />
-              <Route path="/admin/user/:userId" element={
-                <AdminRoute>
-                  <UserDetail />
-                </AdminRoute>
+              <Route path="/vaults" element={
+                <ProtectedRoute>
+                  <Vaults />
+                </ProtectedRoute>
+              } />
+              <Route path="/referral" element={
+                <ProtectedRoute>
+                  <Referral />
+                </ProtectedRoute>
               } />
               <Route path="/profile" element={
                 <ProtectedRoute>
@@ -85,28 +97,22 @@ const App = () => (
                   <Analytics />
                 </ProtectedRoute>
               } />
-              <Route path="/withdraw" element={
-                <ProtectedRoute>
-                  <Withdraw />
-                </ProtectedRoute>
+              <Route path="/admin" element={
+                <AdminRoute>
+                  <Admin />
+                </AdminRoute>
               } />
-              <Route path="/vaults" element={
-                <ProtectedRoute>
-                  <Vaults />
-                </ProtectedRoute>
+              <Route path="/admin/user/:userId" element={
+                <AdminRoute>
+                  <UserDetail />
+                </AdminRoute>
               } />
-              <Route path="/referral" element={
-                <ProtectedRoute>
-                  <Referral />
-                </ProtectedRoute>
-              } />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
-      </WalletProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </Web3OnboardProvider>
   </QueryClientProvider>
 );
 

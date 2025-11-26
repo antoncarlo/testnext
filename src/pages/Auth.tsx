@@ -160,21 +160,17 @@ const Auth = () => {
       try {
         console.log('Requesting signature for chain:', chain);
         console.log('Provider:', wallet.provider);
+        console.log('Message to sign:', message);
         
         if (chain === 'base') {
           // Use EIP-1193 provider for EVM chains
           const provider = wallet.provider;
           
-          // Convert message to hex for personal_sign
-          const hexMessage = '0x' + Array.from(new TextEncoder().encode(message))
-            .map(b => b.toString(16).padStart(2, '0'))
-            .join('');
-          
-          console.log('Calling personal_sign with params:', [hexMessage, connectedAddress]);
+          console.log('Calling personal_sign with params:', [message, connectedAddress]);
           
           signature = await provider.request({
             method: 'personal_sign',
-            params: [hexMessage, connectedAddress],
+            params: [message, connectedAddress],
           });
           
           console.log('Signature received:', signature);

@@ -161,19 +161,50 @@ const Auth = () => {
         console.log('Requesting signature for chain:', chain);
         console.log('Provider:', wallet.provider);
         console.log('Message to sign:', message);
+        console.log('Wallet label:', wallet.label);
         
         if (chain === 'base') {
           // Use EIP-1193 provider for EVM chains
           const provider = wallet.provider;
           
-          console.log('Calling personal_sign with params:', [message, connectedAddress]);
-          
-          signature = await provider.request({
-            method: 'personal_sign',
-            params: [message, connectedAddress],
-          });
-          
-          console.log('Signature received:', signature);
+          // Try personal_sign first (standard method)
+          try {
+            console.log('Attempting personal_sign with params:', [message, connectedAddress]);
+            
+            signature = await provider.request({
+              method: 'personal_sign',
+              params: [message, connectedAddress],
+            });
+            
+            console.log('✓ Signature received via personal_sign:', signature);
+          } catch (firstError: any) {
+            console.warn('personal_sign failed, trying with inverted params:', firstError.message);
+            
+            // Some wallets expect inverted parameter order
+            try {
+              signature = await provider.request({
+                method: 'personal_sign',
+                params: [connectedAddress, message],
+              });
+              
+              console.log('✓ Signature received via personal_sign (inverted params):', signature);
+            } catch (secondError: any) {
+              console.warn('personal_sign (inverted) failed, trying eth_sign:', secondError.message);
+              
+              // Last resort: try eth_sign
+              // Convert message to hex for eth_sign
+              const hexMessage = '0x' + Array.from(new TextEncoder().encode(message))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+              
+              signature = await provider.request({
+                method: 'eth_sign',
+                params: [connectedAddress, hexMessage],
+              });
+              
+              console.log('✓ Signature received via eth_sign:', signature);
+            }
+          }
         } else {
           // For Solana (if supported by the wallet)
           const encodedMessage = new TextEncoder().encode(message);
@@ -182,7 +213,7 @@ const Auth = () => {
           signature = bs58.encode(signedMessage.signature);
         }
       } catch (signError: any) {
-        console.error('Signature error:', signError);
+        console.error('All signature methods failed:', signError);
         if (signError.code === 4001 || signError.message?.includes('User rejected')) {
           throw new Error('Signature request rejected. Please approve the signature to continue.');
         }

@@ -14,14 +14,26 @@ export const BLOCKCHAIN_CONFIG = {
     explorerUrl: 'https://basescan.org',
     explorerUrlTestnet: 'https://sepolia.basescan.org',
     
-    // Smart Contract Addresses (Base)
+    // Smart Contract Addresses (Base Mainnet)
     contracts: {
       vault: import.meta.env.VITE_VAULT_ADDRESS || '',
       strategy: import.meta.env.VITE_STRATEGY_ADDRESS || '',
       navOracle: import.meta.env.VITE_NAV_ORACLE_ADDRESS || '',
       kycWhitelist: import.meta.env.VITE_KYC_WHITELIST_ADDRESS || '',
       cctpReceiver: import.meta.env.VITE_CCTP_RECEIVER_ADDRESS || '',
+      nxbToken: import.meta.env.VITE_NXB_TOKEN_ADDRESS || '',
+      insurancePoolToken: import.meta.env.VITE_INSURANCE_POOL_TOKEN_ADDRESS || '',
       usdc: import.meta.env.VITE_BASE_USDC_ADDRESS || '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+    },
+    
+    // Smart Contract Addresses (Base Sepolia Testnet) - DEPLOYED
+    contractsTestnet: {
+      nxbToken: '0x0b678785BEA8664374eE6991714141d8E13C375a',
+      kycWhitelist: '0xc4Ca6299694383a9581f6ceAEfB02e674160bef5',
+      navOracle: '0x13AfcE4669642085b851319445E0F041698BE32e',
+      cctpReceiver: '0xF0c206B7C434Df70b29DD030C40dE89752dbf287',
+      insurancePoolToken: '0xE5438a2cB7DE27337040fA63F88F74FC11173302',
+      usdc: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
     },
   },
   
@@ -66,7 +78,7 @@ export const BLOCKCHAIN_CONFIG = {
 };
 
 export const isTestnet = () => {
-  return import.meta.env.VITE_NETWORK === 'testnet';
+  return import.meta.env.VITE_NETWORK === 'testnet' || import.meta.env.MODE === 'development';
 };
 
 export const getBaseChainId = () => {
@@ -79,4 +91,8 @@ export const getBaseRpcUrl = () => {
 
 export const getSolanaRpcUrl = () => {
   return isTestnet() ? BLOCKCHAIN_CONFIG.solana.rpcUrlDevnet : BLOCKCHAIN_CONFIG.solana.rpcUrl;
+};
+
+export const getBaseContracts = () => {
+  return isTestnet() ? BLOCKCHAIN_CONFIG.base.contractsTestnet : BLOCKCHAIN_CONFIG.base.contracts;
 };

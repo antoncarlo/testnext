@@ -12,7 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Wallet, LogOut, CheckCircle2 } from 'lucide-react';
 import { isTestnet, getBaseChainId } from '@/config/blockchain';
 
-export const WalletConnectImproved = () => {
+export const WalletConnect = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const { user, signOut } = useAuth();
 

@@ -92,10 +92,14 @@ contract NavOracle is AccessControl {
         uint256 totalLiabilities
     ) external onlyRole(ORACLE_UPDATER_ROLE) {
         require(poolConfig[pool].isActive, "Pool not active");
-        require(
-            block.timestamp >= currentNav[pool].timestamp + poolConfig[pool].minUpdateInterval,
-            "Update too frequent"
-        );
+        
+        // Allow first update without interval check
+        if (currentNav[pool].timestamp > 0) {
+            require(
+                block.timestamp >= currentNav[pool].timestamp + poolConfig[pool].minUpdateInterval,
+                "Update too frequent"
+            );
+        }
         
         // Store historical data
         historicalNav[pool][block.timestamp] = NavData({

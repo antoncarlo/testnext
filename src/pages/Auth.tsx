@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { useWallet } from '@/hooks/useWallet';
+import { useConnectWallet } from '@web3-onboard/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Loader2, Home, Wallet } from 'lucide-react';
+import { WalletConnect } from '@/components/WalletConnect';
+import { Loader2, Home } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import bs58 from 'bs58';
@@ -23,12 +23,11 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
   const [walletLoadingStep, setWalletLoadingStep] = useState('');
-  const [showWalletSelect, setShowWalletSelect] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [referralCode, setReferralCode] = useState('');
   const { signIn, signUp, signInWithWallet, user } = useAuth();
-  const { connectWallet } = useWallet();
+  const [{ wallet }] = useConnectWallet();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -50,6 +49,13 @@ const Auth = () => {
       navigate('/dashboard');
     }
   }, [user, navigate]);
+
+  // Handle wallet authentication when wallet is connected
+  useEffect(() => {
+    if (wallet && !user && !walletLoading) {
+      handleWalletAuth();
+    }
+  }, [wallet]);
 
   const validateEmail = () => {
     try {
@@ -117,39 +123,28 @@ const Auth = () => {
     setLoading(false);
   };
 
-  const handleWalletAuth = async (type: 'metamask' | 'phantom') => {
+  const handleWalletAuth = async () => {
+    if (!wallet || !wallet.accounts || wallet.accounts.length === 0) {
+      return;
+    }
+
     setWalletLoading(true);
-    setWalletLoadingStep('Connecting wallet...');
+    setWalletLoadingStep('Preparing authentication...');
     
     try {
-      // Check if wallet is available
-      if (type === 'metamask') {
-        if (!window.ethereum || !window.ethereum.isMetaMask) {
-          throw new Error('MetaMask is not installed. Please install MetaMask to continue.');
-        }
-      } else if (type === 'phantom') {
-        if (!window.solana || !window.solana.isPhantom) {
-          throw new Error('Phantom wallet is not installed. Please install Phantom to continue.');
-        }
-      }
-
-      // Connect wallet
-      await connectWallet(type);
+      const connectedAddress = wallet.accounts[0].address;
+      const chainId = wallet.chains[0].id;
       
-      // Give it a moment for the wallet to connect
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Get the connected address from the wallet
-      let connectedAddress = '';
-      if (type === 'metamask' && window.ethereum) {
-        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        connectedAddress = accounts[0];
-      } else if (type === 'phantom' && window.solana?.isConnected) {
-        connectedAddress = window.solana.publicKey.toString();
-      }
-
-      if (!connectedAddress) {
-        throw new Error('Failed to connect wallet. Please try again.');
+      // Determine chain type based on chainId
+      let chain: 'base' | 'solana' = 'base';
+      const chainIdNum = parseInt(chainId, 16);
+      
+      // Base mainnet: 8453, Base Sepolia: 84532
+      if (chainIdNum === 8453 || chainIdNum === 84532) {
+        chain = 'base';
+      } else {
+        // For now, assume anything else is Solana (you can add more chain detection)
+        chain = 'solana';
       }
 
       // Create message to sign
@@ -158,18 +153,21 @@ const Auth = () => {
       const message = `Sign this message to authenticate with NextBlock Re.\n\nWallet: ${connectedAddress}\nTimestamp: ${timestamp}`;
 
       let signature = '';
-      const chain = type === 'metamask' ? 'base' : 'solana';
 
       // Request signature
       try {
-        if (type === 'metamask' && window.ethereum) {
-          signature = await window.ethereum.request({
+        if (chain === 'base') {
+          // Use EIP-1193 provider for EVM chains
+          const provider = wallet.provider;
+          signature = await provider.request({
             method: 'personal_sign',
             params: [message, connectedAddress],
           });
-        } else if (type === 'phantom' && window.solana) {
+        } else {
+          // For Solana (if supported by the wallet)
           const encodedMessage = new TextEncoder().encode(message);
-          const signedMessage = await window.solana.signMessage(encodedMessage, 'utf8');
+          const provider = wallet.provider;
+          const signedMessage = await provider.signMessage(encodedMessage, 'utf8');
           signature = bs58.encode(signedMessage.signature);
         }
       } catch (signError: any) {
@@ -337,80 +335,15 @@ const Auth = () => {
             </span>
           </div>
 
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            onClick={() => setShowWalletSelect(true)}
-            disabled={walletLoading || loading}
-          >
-            {walletLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                {walletLoadingStep}
-              </>
-            ) : (
-              <>
-                <Wallet className="h-4 w-4 mr-2" />
-                Connect Wallet
-              </>
-            )}
-          </Button>
-        </Card>
-
-        <Dialog open={showWalletSelect} onOpenChange={setShowWalletSelect}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Select Your Wallet</DialogTitle>
-              <DialogDescription>
-                Choose which wallet you want to connect to access NextBlock Re
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-3 mt-4">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full justify-start h-auto py-4"
-                onClick={() => {
-                  setShowWalletSelect(false);
-                  handleWalletAuth('metamask');
-                }}
-                disabled={walletLoading}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
-                    <Wallet className="h-5 w-5 text-orange-500" />
-                  </div>
-                  <div className="text-left">
-                    <div className="font-semibold">MetaMask</div>
-                    <div className="text-sm text-muted-foreground">Connect with Base network</div>
-                  </div>
-                </div>
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full justify-start h-auto py-4"
-                onClick={() => {
-                  setShowWalletSelect(false);
-                  handleWalletAuth('phantom');
-                }}
-                disabled={walletLoading}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                    <Wallet className="h-5 w-5 text-purple-500" />
-                  </div>
-                  <div className="text-left">
-                    <div className="font-semibold">Phantom</div>
-                    <div className="text-sm text-muted-foreground">Connect with Solana network</div>
-                  </div>
-                </div>
-              </Button>
+          {walletLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <Loader2 className="h-6 w-6 animate-spin mr-2" />
+              <span className="text-sm text-muted-foreground">{walletLoadingStep}</span>
             </div>
-          </DialogContent>
-        </Dialog>
-
+          ) : (
+            <WalletConnect />
+          )}
+        </Card>
 
         <div className="text-center mt-6">
           <Link to="/">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { useWallet } from './useWallet';
+import { useWallet } from '@/contexts/WalletContext';
 
 export const useWalletBalance = () => {
   const { address, chainType, isConnected } = useWallet();

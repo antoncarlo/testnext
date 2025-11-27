@@ -6,7 +6,7 @@
 
 import { createContext, useContext, ReactNode, useEffect, useState } from "react";
 import { useConnectWallet } from "@web3-onboard/react";
-import { ethers } from "ethers";
+import { ethers, BrowserProvider } from "ethers";
 
 interface WalletContextType {
   isConnected: boolean;
@@ -27,9 +27,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   // Get balance when connected
   useEffect(() => {
     if (wallet?.provider && wallet.accounts[0]?.address) {
-      const provider = new ethers.providers.Web3Provider(wallet.provider, 'any');
+      const provider = new BrowserProvider(wallet.provider);
       provider.getBalance(wallet.accounts[0].address).then((bal) => {
-        setBalance(parseFloat(ethers.utils.formatEther(bal)));
+        setBalance(parseFloat(ethers.formatEther(bal)));
       }).catch((error) => {
         console.error("Failed to get balance:", error);
         setBalance(0);

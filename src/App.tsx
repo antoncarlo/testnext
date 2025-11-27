@@ -31,6 +31,7 @@ import Analytics from "./pages/Analytics";
 import Withdraw from "./pages/Withdraw";
 import Vaults from "./pages/Vaults";
 import Referral from "./pages/Referral";
+import Transactions from "./pages/Transactions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -82,6 +83,11 @@ const App = () => (
               <Route path="/referral" element={
                 <ProtectedRoute>
                   <Referral />
+                </ProtectedRoute>
+              } />
+              <Route path="/transactions" element={
+                <ProtectedRoute>
+                  <Transactions />
                 </ProtectedRoute>
               } />
               <Route path="/profile" element={

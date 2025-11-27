@@ -7,19 +7,9 @@
 
 import { init } from '@web3-onboard/react';
 import injectedModule from '@web3-onboard/injected-wallets';
-import coinbaseModule from '@web3-onboard/coinbase';
 import walletConnectModule from '@web3-onboard/walletconnect';
-import trustModule from '@web3-onboard/trust';
 
-const injected = injectedModule({
-  displayUnavailable: [
-    'MetaMask',
-    'Coinbase Wallet',
-    'Trust Wallet',
-  ],
-});
-const coinbase = coinbaseModule();
-const trust = trustModule();
+const injected = injectedModule();
 
 const walletConnect = walletConnectModule({
   projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID',
@@ -30,8 +20,6 @@ const walletConnect = walletConnectModule({
 const wallets = [
   injected,
   walletConnect,
-  coinbase,
-  trust,
 ];
 
 export const chains = [

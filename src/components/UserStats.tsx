@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { useWallet } from '@/hooks/useWallet';
+import { useWallet } from '@/contexts/WalletContext';
 import { TrendingUp, Award, Coins, Ship } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 

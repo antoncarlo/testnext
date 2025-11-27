@@ -3,7 +3,7 @@ import { WalletConnect } from '@/components/WalletConnect';
 import { DepositCard } from '@/components/DepositCard';
 import { UserStats } from '@/components/UserStats';
 import { TransactionHistory } from '@/components/TransactionHistory';
-import { useWallet } from '@/hooks/useWallet';
+import { useWallet } from '@/contexts/WalletContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useWalletBalance } from '@/hooks/useWalletBalance';
 import { useAdminCheck } from '@/hooks/useAdminCheck';

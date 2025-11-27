@@ -14,6 +14,8 @@ interface WalletContextType {
   balance: number;
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
+  walletType: string | null;
+  chainType: string | null;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -51,6 +53,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const walletType = wallet?.label || null;
+  const chainId = wallet?.chains[0]?.id;
+  const chainType = chainId === '0x14a34' ? 'base-sepolia' : chainId === '0x2105' ? 'base' : null;
+
   return (
     <WalletContext.Provider
       value={{
@@ -59,6 +65,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         balance,
         connectWallet,
         disconnectWallet,
+        walletType,
+        chainType,
       }}
     >
       {children}
@@ -70,6 +78,15 @@ export function useWalletVenetian() {
   const context = useContext(WalletContext);
   if (context === undefined) {
     throw new Error("useWalletVenetian must be used within a WalletProvider");
+  }
+  return context;
+}
+
+// Export useWallet as alias for compatibility with existing code
+export function useWallet() {
+  const context = useContext(WalletContext);
+  if (context === undefined) {
+    throw new Error("useWallet must be used within a WalletProvider");
   }
   return context;
 }

@@ -66,7 +66,7 @@ export default function Index() {
               <a href="#heritage" className="text-sm font-medium hover:text-primary transition-colors">
                 Storia
               </a>
-              <Button variant="default" className="bg-primary hover:bg-primary/90">
+              <Button variant="default" className="bg-primary hover:bg-primary/90" onClick={handleGetStarted}>
                 Inizia Ora
               </Button>
             </div>

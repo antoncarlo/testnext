@@ -162,13 +162,19 @@ serve(async (req) => {
       throw new Error('Failed to create withdrawal record');
     }
 
-    // In production, here you would:
-    // 1. Queue the withdrawal for processing
-    // 2. Use a secure backend service with Treasury private key
-    // 3. Send the transaction on-chain
-    // 4. Update the withdrawal record with tx_hash and status
-
-    // For now, we'll mark it as pending and return success
+    // Automatically execute the withdrawal
+    console.log('Triggering automatic withdrawal execution...');
+    
+    // Call execute-withdrawal function asynchronously
+    // We don't wait for it to complete to give immediate response to user
+    fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/execute-withdrawal`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+      },
+      body: JSON.stringify({ withdrawal_id: withdrawal.id }),
+    }).catch(err => console.error('Failed to trigger withdrawal execution:', err));
     return new Response(
       JSON.stringify({
         success: true,
@@ -181,8 +187,8 @@ serve(async (req) => {
           status: 'pending',
           message:
             penaltyAmount > 0
-              ? `Withdrawal requested with ${(EARLY_WITHDRAWAL_PENALTY * 100).toFixed(0)}% early withdrawal penalty. Your withdrawal will be processed within 24 hours.`
-              : 'Withdrawal requested. Your withdrawal will be processed within 24 hours.',
+              ? `Withdrawal requested with ${(EARLY_WITHDRAWAL_PENALTY * 100).toFixed(0)}% early withdrawal penalty. Processing transaction...`
+              : 'Withdrawal requested. Processing transaction...',
         },
       }),
       {

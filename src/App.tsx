@@ -15,7 +15,9 @@ import { web3Onboard } from '@/config/web3-onboard';
 import { AuthProvider } from "@/hooks/useAuth";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ProtectedLayout } from "@/components/ProtectedLayout";
 import { AdminRoute } from "@/components/AdminRoute";
+import DashboardLayout from "@/components/DashboardLayout";
 import { Loader2 } from "lucide-react";
 
 // Eager load critical pages (Home, Auth)
@@ -71,72 +73,76 @@ const App = () => (
                   
                   {/* Protected routes - lazy loaded */}
                   <Route path="/dashboard" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <Dashboard />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   <Route path="/leaderboard" element={<Leaderboard />} />
                   <Route path="/portfolio" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <Portfolio />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   <Route path="/defi" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <DeFiOpportunities />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   <Route path="/transparency" element={<Transparency />} />
                   <Route path="/deposit" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <Deposit />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   <Route path="/withdraw" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <Withdraw />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   <Route path="/vaults" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <Vaults />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   <Route path="/referral" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <Referral />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   <Route path="/transactions" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <Transactions />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   <Route path="/profile" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <Profile />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   <Route path="/activity" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <Activity />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   <Route path="/analytics" element={
-                    <ProtectedRoute>
+                    <ProtectedLayout>
                       <Analytics />
-                    </ProtectedRoute>
+                    </ProtectedLayout>
                   } />
                   
                   {/* Admin routes - lazy loaded */}
                   <Route path="/admin" element={
                     <AdminRoute>
-                      <Admin />
+                      <DashboardLayout>
+                        <Admin />
+                      </DashboardLayout>
                     </AdminRoute>
                   } />
                   <Route path="/admin/user/:userId" element={
                     <AdminRoute>
-                      <UserDetail />
+                      <DashboardLayout>
+                        <UserDetail />
+                      </DashboardLayout>
                     </AdminRoute>
                   } />
                   

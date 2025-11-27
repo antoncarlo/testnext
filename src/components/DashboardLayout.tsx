@@ -11,7 +11,7 @@ import {
   TrendingUp,
   History
 } from "lucide-react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 interface DashboardLayoutProps {
@@ -20,7 +20,8 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { address, balance, disconnectWallet } = useWalletVenetian();
-  const [location, setLocation] = useLocation();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
@@ -33,7 +34,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const handleDisconnect = () => {
     disconnectWallet();
-    setLocation("/");
+    navigate("/");
   };
 
   const formatAddress = (addr: string) => {

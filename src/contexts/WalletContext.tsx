@@ -66,10 +66,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useWallet() {
+export function useWalletVenetian() {
   const context = useContext(WalletContext);
   if (context === undefined) {
-    throw new Error("useWallet must be used within a WalletProvider");
+    throw new Error("useWalletVenetian must be used within a WalletProvider");
   }
   return context;
 }

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useWallet } from "@/contexts/WalletContext";
+import { useWalletVenetian } from "@/contexts/WalletContext";
 import { 
   LayoutDashboard, 
   Vault, 
@@ -19,7 +19,7 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { address, balance, disconnectWallet } = useWallet();
+  const { address, balance, disconnectWallet } = useWalletVenetian();
   const [location, setLocation] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

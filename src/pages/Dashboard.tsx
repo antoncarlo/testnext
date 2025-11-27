@@ -167,29 +167,21 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Wallet Connection */}
-        <div className="mb-8">
-          <WalletConnect />
-        </div>
-
-        {/* User Stats */}
-        {isConnected && (
-          <div className="mb-8">
-            <UserStats />
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Left Column - Wallet & Stats */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Wallet Connection */}
+            <WalletConnect />
+            
+            {/* User Stats */}
+            {isConnected && <UserStats />}
           </div>
-        )}
 
-        {/* Transaction History */}
-        {isConnected && user && (
-          <div className="mb-8">
-            <TransactionHistory />
-          </div>
-        )}
-
-        {/* Deposit Section */}
-        {isConnected && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <DepositCard />
+          {/* Center Column - Deposit Section */}
+          <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <DepositCard />
             
             {/* Info Card */}
             <div className="space-y-4">
@@ -241,6 +233,14 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        </div>
+
+        {/* Transaction History */}
+        {isConnected && user && (
+          <div className="mb-8">
+            <TransactionHistory />
           </div>
         )}
 

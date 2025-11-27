@@ -19,21 +19,21 @@ import {
   BarChart3
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo, memo } from "react";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+const DashboardLayout = memo(function DashboardLayout({ children }: DashboardLayoutProps) {
   const { address, balance, disconnectWallet } = useWalletVenetian();
   const { isAdmin } = useAdminCheck();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Navigation items - aggiornati con tutti i link
-  const navigation = [
+  // Navigation items - memoized for performance
+  const navigation = useMemo(() => [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Vault", href: "/vaults", icon: Vault },
     { name: "Portafoglio", href: "/portfolio", icon: TrendingUp },
@@ -44,12 +44,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: "Referral", href: "/referral", icon: Gift },
     { name: "Classifica", href: "/leaderboard", icon: Trophy },
     { name: "Profilo", href: "/profile", icon: User },
-  ];
+  ], []);
 
-  // Add Admin link if user is admin
-  const adminNavigation = isAdmin ? [
-    { name: "Admin", href: "/admin", icon: Shield }
-  ] : [];
+  // Add Admin link if user is admin - memoized
+  const adminNavigation = useMemo(() => isAdmin ? [    { name: "Admin", href: "/admin", icon: Shield },
+  ] : [], [isAdmin]);
 
   const allNavigation = [...adminNavigation, ...navigation];
 
@@ -183,4 +182,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
     </div>
   );
-}
+});
+
+export default DashboardLayout;

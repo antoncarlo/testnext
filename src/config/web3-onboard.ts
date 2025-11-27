@@ -11,7 +11,13 @@ import coinbaseModule from '@web3-onboard/coinbase';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import trustModule from '@web3-onboard/trust';
 
-const injected = injectedModule();
+const injected = injectedModule({
+  displayUnavailable: [
+    'MetaMask',
+    'Coinbase Wallet',
+    'Trust Wallet',
+  ],
+});
 const coinbase = coinbaseModule();
 const trust = trustModule();
 

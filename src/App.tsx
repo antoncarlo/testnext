@@ -12,7 +12,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Web3OnboardProvider } from '@web3-onboard/react';
 import { web3Onboard } from '@/config/web3-onboard';
 import { AuthProvider } from "@/hooks/useAuth";
-import { WalletProvider } from "@/hooks/useWallet";
+import { WalletProvider as WalletProviderImproved } from "@/hooks/useWalletImproved";
+import { WalletProvider } from "@/contexts/WalletContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
 import Index from "./pages/Index";
@@ -39,8 +40,9 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <Web3OnboardProvider web3Onboard={web3Onboard}>
       <AuthProvider>
-        <WalletProvider>
-          <TooltipProvider>
+        <WalletProviderImproved>
+          <WalletProvider>
+            <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -111,9 +113,10 @@ const App = () => (
               } />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
-          </TooltipProvider>
-        </WalletProvider>
+            </BrowserRouter>
+            </TooltipProvider>
+          </WalletProvider>
+        </WalletProviderImproved>
       </AuthProvider>
     </Web3OnboardProvider>
   </QueryClientProvider>

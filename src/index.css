@@ -2,95 +2,119 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Venetian Color Palette - Inspired by Perena's hybrid style */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 280 100% 70%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
-
+    /* Primary - Deep navy blue (Venetian sea) */
+    --primary: 210 80% 25%;
+    --primary-foreground: 0 0% 98%;
+    
+    /* Secondary - Teal/aqua (Adriatic waters) */
+    --secondary: 180 40% 45%;
+    --secondary-foreground: 0 0% 98%;
+    
+    /* Accent - Warm gold (Venetian ducats - used sparingly) */
+    --accent: 45 85% 65%;
+    --accent-foreground: 240 20% 15%;
+    
+    /* Background - Warm beige/parchment */
+    --background: 40 15% 97%;
+    --foreground: 240 20% 15%;
+    
+    /* Card */
+    --card: 40 10% 99%;
+    --card-foreground: 240 20% 15%;
+    
+    /* Popover */
+    --popover: 40 10% 99%;
+    --popover-foreground: 240 20% 15%;
+    
+    /* Muted */
+    --muted: 40 10% 94%;
+    --muted-foreground: 240 10% 50%;
+    
+    /* Destructive */
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 217 91% 60%;
-
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Border */
+    --border: 40 10% 88%;
+    --input: 40 10% 88%;
+    --ring: 180 40% 45%;
+    
+    /* Success */
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217 91% 60%;
+    
+    /* Radius */
+    --radius: 0.65rem;
+    
+    /* Sidebar */
+    --sidebar-background: 40 10% 99%;
+    --sidebar-foreground: 240 20% 15%;
+    --sidebar-primary: 210 80% 30%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 40 10% 94%;
+    --sidebar-accent-foreground: 240 20% 15%;
+    --sidebar-border: 40 10% 88%;
+    --sidebar-ring: 180 40% 45%;
+    
+    /* Chart colors */
+    --chart-1: 210 70% 55%;
+    --chart-2: 180 60% 50%;
+    --chart-3: 45 80% 65%;
+    --chart-4: 210 80% 45%;
+    --chart-5: 180 50% 40%;
   }
 
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
-
-    --card: 224 71% 4%;
-    --card-foreground: 213 31% 91%;
-
-    --popover: 224 71% 4%;
-    --popover-foreground: 213 31% 91%;
-
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 280 100% 70%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 223 47% 11%;
-    --muted-foreground: 215.4 16.3% 56.9%;
-
-    --accent: 216 34% 17%;
-    --accent-foreground: 210 40% 98%;
-
+    --primary: 210 70% 50%;
+    --primary-foreground: 0 0% 98%;
+    
+    --sidebar-primary: 210 70% 45%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    
+    --background: 240 20% 12%;
+    --foreground: 40 10% 90%;
+    
+    --card: 240 15% 16%;
+    --card-foreground: 40 10% 90%;
+    
+    --popover: 240 15% 16%;
+    --popover-foreground: 40 10% 90%;
+    
+    --secondary: 180 30% 25%;
+    --secondary-foreground: 40 10% 90%;
+    
+    --muted: 240 15% 25%;
+    --muted-foreground: 40 10% 70%;
+    
+    --accent: 45 80% 65%;
+    --accent-foreground: 240 20% 12%;
+    
     --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 216 34% 17%;
-    --input: 216 34% 17%;
-    --ring: 217 91% 60%;
-
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 240 15% 25%;
+    --input: 240 15% 25%;
+    --ring: 210 70% 50%;
+    
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
-
-    --sidebar-background: 224 71% 4%;
-    --sidebar-foreground: 213 31% 91%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 216 34% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 216 34% 17%;
-    --sidebar-ring: 217 91% 60%;
+    
+    --sidebar-background: 240 15% 16%;
+    --sidebar-foreground: 40 10% 90%;
+    --sidebar-accent: 240 15% 25%;
+    --sidebar-accent-foreground: 40 10% 90%;
+    --sidebar-border: 240 15% 25%;
+    --sidebar-ring: 210 70% 50%;
+    
+    --chart-1: 210 70% 60%;
+    --chart-2: 180 60% 55%;
+    --chart-3: 45 85% 70%;
+    --chart-4: 210 70% 50%;
+    --chart-5: 180 50% 45%;
   }
 }
 
@@ -101,5 +125,65 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
   }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-secondary;
+}
+
+/* Venetian decorative pattern (optional background) */
+.venetian-pattern {
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(180, 140, 80, 0.03) 10px,
+      rgba(180, 140, 80, 0.03) 20px
+    );
+}
+
+/* Fade in animation for scroll-based reveals */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.scroll-animate {
+  opacity: 0;
 }

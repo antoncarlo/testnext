@@ -1,11 +1,10 @@
 /**
  * Wallet Context Wrapper
  * Provides a simplified interface compatible with the Venetian UI
- * Uses the existing useWalletImproved hook under the hood
+ * Uses Web3-Onboard directly
  */
 
 import { createContext, useContext, ReactNode, useEffect, useState } from "react";
-import { useWalletImproved } from "@/hooks/useWalletImproved";
 import { useConnectWallet } from "@web3-onboard/react";
 import { ethers } from "ethers";
 
@@ -20,13 +19,14 @@ interface WalletContextType {
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export function WalletProvider({ children }: { children: ReactNode }) {
-  const { isConnected, address, connectWallet: connectWalletImproved, disconnectWallet: disconnectWalletImproved, provider } = useWalletImproved();
+  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const [balance, setBalance] = useState(0);
 
   // Get balance when connected
   useEffect(() => {
-    if (isConnected && address && provider) {
-      provider.getBalance(address).then((bal) => {
+    if (wallet?.provider && wallet.accounts[0]?.address) {
+      const provider = new ethers.providers.Web3Provider(wallet.provider, 'any');
+      provider.getBalance(wallet.accounts[0].address).then((bal) => {
         setBalance(parseFloat(ethers.utils.formatEther(bal)));
       }).catch((error) => {
         console.error("Failed to get balance:", error);
@@ -35,16 +35,30 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     } else {
       setBalance(0);
     }
-  }, [isConnected, address, provider]);
+  }, [wallet]);
+
+  const connectWallet = async () => {
+    try {
+      await connect();
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+    }
+  };
+
+  const disconnectWallet = () => {
+    if (wallet) {
+      disconnect(wallet);
+    }
+  };
 
   return (
     <WalletContext.Provider
       value={{
-        isConnected,
-        address,
+        isConnected: !!wallet,
+        address: wallet?.accounts[0]?.address || null,
         balance,
-        connectWallet: connectWalletImproved,
-        disconnectWallet: disconnectWalletImproved,
+        connectWallet,
+        disconnectWallet,
       }}
     >
       {children}

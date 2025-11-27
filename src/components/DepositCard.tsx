@@ -8,11 +8,16 @@ import { useAuth } from '@/hooks/useAuth';
 import { useActivityLogger } from '@/hooks/useActivityLogger';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowDownToLine, Loader2 } from 'lucide-react';
+import { ArrowDownToLine, Loader2, AlertCircle } from 'lucide-react';
+import { BrowserProvider, parseEther, formatEther } from 'ethers';
+
+// Treasury wallet address for deposits (replace with your actual address)
+const TREASURY_ADDRESS = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
 
 export const DepositCard = () => {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
+  const [txStatus, setTxStatus] = useState<string>('');
   const { address, chainType, isConnected } = useWallet();
   const { user } = useAuth();
   const { logActivity } = useActivityLogger();
@@ -38,16 +43,24 @@ export const DepositCard = () => {
       return;
     }
 
+    // Only support Base chain for now
+    if (chainType !== 'base') {
+      toast({
+        title: 'Unsupported Chain',
+        description: 'Please switch to Base network in your wallet',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setLoading(true);
+    setTxStatus('Preparing transaction...');
 
     try {
-      // Mock transaction hash for demo
-      const txHash = `0x${Math.random().toString(16).substring(2, 66)}`;
-      
       // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
       
-      if (!user) {
+      if (!currentUser) {
         toast({
           title: 'Authentication Required',
           description: 'Please sign in to continue',
@@ -56,37 +69,109 @@ export const DepositCard = () => {
         return;
       }
 
-      // Insert deposit record
-      const { error } = await supabase.from('deposits').insert({
-        user_id: user.id,
-        amount: depositAmount,
-        tx_hash: txHash,
-        chain: chainType || 'base',
-        status: 'pending',
+      // Get the provider from window.ethereum
+      if (!window.ethereum) {
+        throw new Error('No Web3 provider found. Please install MetaMask or use Trust Wallet.');
+      }
+
+      setTxStatus('Connecting to wallet...');
+      
+      // Create ethers provider and signer
+      const provider = new BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      
+      // Verify the connected address matches
+      const signerAddress = await signer.getAddress();
+      if (signerAddress.toLowerCase() !== address.toLowerCase()) {
+        throw new Error('Wallet address mismatch. Please reconnect your wallet.');
+      }
+
+      setTxStatus('Sending transaction...');
+      console.log('Sending transaction:', {
+        from: address,
+        to: TREASURY_ADDRESS,
+        value: parseEther(amount.toString()),
       });
 
-      if (error) throw error;
+      // Send the transaction
+      const tx = await signer.sendTransaction({
+        to: TREASURY_ADDRESS,
+        value: parseEther(amount.toString()),
+      });
+
+      console.log('Transaction sent:', tx.hash);
+      setTxStatus('Waiting for confirmation...');
 
       toast({
-        title: 'Deposit Initiated',
-        description: `Depositing ${depositAmount} ETH. Points will be awarded once confirmed.`,
+        title: 'Transaction Sent',
+        description: `Transaction hash: ${tx.hash.slice(0, 10)}...`,
+      });
+
+      // Wait for transaction confirmation
+      const receipt = await tx.wait();
+      
+      if (!receipt) {
+        throw new Error('Transaction receipt not found');
+      }
+
+      console.log('Transaction confirmed:', receipt);
+      setTxStatus('Saving to database...');
+
+      // Insert deposit record with real transaction hash
+      const { error: dbError } = await supabase.from('deposits').insert({
+        user_id: currentUser.id,
+        amount: depositAmount,
+        tx_hash: tx.hash,
+        chain: chainType,
+        status: 'confirmed',
+      });
+
+      if (dbError) {
+        console.error('Database error:', dbError);
+        throw new Error('Failed to save deposit record');
+      }
+
+      toast({
+        title: 'Deposit Successful! 🎉',
+        description: `Deposited ${depositAmount} ETH. You earned ${depositAmount * 1000} points!`,
       });
 
       // Log deposit activity
-      await logActivity('deposit_submitted', `Submitted deposit of ${depositAmount} ${chainType}`, {
+      await logActivity('deposit_confirmed', `Confirmed deposit of ${depositAmount} ETH`, {
         amount: depositAmount,
         chain: chainType,
-        tx_hash: txHash,
+        tx_hash: tx.hash,
+        block_number: receipt.blockNumber,
       });
 
       setAmount('');
-    } catch (error) {
+      setTxStatus('');
+      
+      // Reload the page to update stats
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+
+    } catch (error: any) {
       console.error('Deposit error:', error);
+      
+      let errorMessage = 'Failed to process deposit';
+      
+      if (error.code === 4001 || error.message?.includes('User rejected')) {
+        errorMessage = 'Transaction rejected by user';
+      } else if (error.code === 'INSUFFICIENT_FUNDS') {
+        errorMessage = 'Insufficient funds for transaction';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       toast({
         title: 'Deposit Failed',
-        description: 'Failed to process deposit',
+        description: errorMessage,
         variant: 'destructive',
       });
+
+      setTxStatus('');
     } finally {
       setLoading(false);
     }
@@ -120,9 +205,27 @@ export const DepositCard = () => {
           </p>
         </div>
 
+        {chainType !== 'base' && isConnected && (
+          <div className="flex items-start gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+            <AlertCircle className="h-4 w-4 text-yellow-500 mt-0.5" />
+            <p className="text-sm text-yellow-600 dark:text-yellow-400">
+              Please switch to Base network in your wallet to deposit
+            </p>
+          </div>
+        )}
+
+        {txStatus && (
+          <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+            <p className="text-sm text-blue-600 dark:text-blue-400 flex items-center gap-2">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              {txStatus}
+            </p>
+          </div>
+        )}
+
         <Button 
           onClick={handleDeposit} 
-          disabled={!isConnected || loading || !amount}
+          disabled={!isConnected || loading || !amount || chainType !== 'base'}
           className="w-full"
         >
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

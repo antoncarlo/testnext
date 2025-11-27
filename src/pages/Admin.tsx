@@ -1,4 +1,5 @@
 import { AdminStats } from '@/components/admin/AdminStats';
+import { VaultManagement } from '@/components/admin/VaultManagement';
 import { UsersTable } from '@/components/admin/UsersTable';
 import { AllDepositsTable } from '@/components/admin/AllDepositsTable';
 import { AdminDefiPanel } from '@/components/admin/AdminDefiPanel';
@@ -45,7 +46,7 @@ const Admin = () => {
 
         {/* Tabs for different sections */}
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Users
@@ -53,6 +54,10 @@ const Admin = () => {
             <TabsTrigger value="deposits" className="flex items-center gap-2">
               <Wallet className="h-4 w-4" />
               Deposits
+            </TabsTrigger>
+            <TabsTrigger value="vaults" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Vaults
             </TabsTrigger>
             <TabsTrigger value="defi" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
@@ -66,6 +71,10 @@ const Admin = () => {
 
           <TabsContent value="deposits">
             <AllDepositsTable />
+          </TabsContent>
+
+          <TabsContent value="vaults">
+            <VaultManagement />
           </TabsContent>
 
           <TabsContent value="defi">

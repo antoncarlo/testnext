@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useActivityLogger } from '@/hooks/useActivityLogger';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowDownToLine, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
+import { ArrowDownToLine, Loader2, AlertCircle, ExternalLink, Vault } from 'lucide-react';
 import { BrowserProvider, parseEther, Contract } from 'ethers';
 
 // SimpleVault ABI (only the functions we need)
@@ -258,18 +258,18 @@ export const DepositCard = () => {
     : 'https://basescan.org';
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 border-accent/20 bg-gradient-to-br from-accent/5 to-primary/5">
       <div className="flex items-center gap-2 mb-4">
-        <ArrowDownToLine className="h-5 w-5 text-primary" />
-        <h3 className="text-lg font-semibold">Deposit to Vault</h3>
+        <Vault className="h-5 w-5 text-accent" />
+        <h3 className="text-lg font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>Deposita nel Vault</h3>
       </div>
       
       <div className="space-y-4">
         <div>
-          <Label htmlFor="vault">Select Vault</Label>
+          <Label htmlFor="vault" className="font-semibold">Seleziona Vault</Label>
           <Select value={selectedVault} onValueChange={setSelectedVault} disabled={loading || vaults.length === 0}>
             <SelectTrigger>
-              <SelectValue placeholder={vaults.length === 0 ? "No vaults available" : "Select a vault"} />
+              <SelectValue placeholder={vaults.length === 0 ? "Nessun vault disponibile" : "Seleziona un vault"} />
             </SelectTrigger>
             <SelectContent>
               {vaults.map((vault) => (
@@ -287,7 +287,7 @@ export const DepositCard = () => {
         </div>
 
         <div>
-          <Label htmlFor="amount">Amount (ETH)</Label>
+          <Label htmlFor="amount" className="font-semibold">Importo (ETH)</Label>
           <Input
             id="amount"
             type="number"

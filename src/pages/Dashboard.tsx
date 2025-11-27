@@ -1,3 +1,4 @@
+import DashboardLayout from '@/components/DashboardLayout';
 import { WalletConnect } from '@/components/WalletConnect';
 import { DepositCard } from '@/components/DepositCard';
 import { UserStats } from '@/components/UserStats';
@@ -9,9 +10,10 @@ import { useAdminCheck } from '@/hooks/useAdminCheck';
 import { usePageView } from '@/hooks/useActivityLogger';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
-import { Trophy, Home, LogOut, Copy, Check, QrCode, Shield, User, Activity, TrendingUp, ArrowDownToLine, Vault, Gift } from 'lucide-react';
+import { Trophy, Home, LogOut, Copy, Check, QrCode, Shield, User, Activity, TrendingUp, ArrowDownToLine, Vault, Gift, Ship, Coins } from 'lucide-react';
 import { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -37,39 +39,44 @@ const Dashboard = () => {
       await navigator.clipboard.writeText(address);
       setCopied(true);
       toast({
-        title: 'Copied!',
-        description: 'Wallet address copied to clipboard',
+        title: 'Copiato!',
+        description: 'Indirizzo wallet copiato negli appunti',
       });
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Dashboard
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your deposits and track your rewards
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Welcome Header - Venetian Style */}
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 p-8 border border-primary/20">
+          <div className="absolute inset-0 venetian-pattern opacity-20"></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-3">
+              <Ship className="w-8 h-8 text-accent" />
+              <h1 className="text-4xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Benvenuto, Mercante
+              </h1>
+            </div>
+            <p className="text-muted-foreground text-lg">
+              Gestisci i tuoi depositi e monitora i rendimenti con l'eleganza veneziana
             </p>
             {user && (
-              <p className="text-sm text-muted-foreground mt-1">
-                Signed in as: {user.email}
+              <p className="text-sm text-muted-foreground mt-2">
+                Connesso come: <span className="font-semibold">{user.email}</span>
               </p>
             )}
             {isConnected && address && (
-              <div className="flex items-center gap-2 mt-2">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-lg border border-primary/20">
-                  <div className="flex items-center gap-1.5">
-                    <div className={`h-2 w-2 rounded-full ${walletType === 'metamask' ? 'bg-orange-500' : 'bg-purple-500'}`} />
+              <div className="flex items-center gap-2 mt-4">
+                <div className="flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <div className={`h-2.5 w-2.5 rounded-full ${walletType === 'metamask' ? 'bg-orange-500' : 'bg-purple-500'}`} />
                     <span className="text-xs font-medium text-muted-foreground">
                       {walletType === 'metamask' ? 'MetaMask' : 'Phantom'} ({chainType === 'base' ? 'Base' : 'Solana'})
                     </span>
                   </div>
+                  <div className="h-4 w-px bg-border" />
                   <span className="font-mono text-sm font-semibold">
                     {address.slice(0, 6)}...{address.slice(-4)}
                   </span>
@@ -80,95 +87,102 @@ const Dashboard = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 w-6 p-0"
+                    className="h-7 w-7 p-0"
                     onClick={copyAddress}
                   >
                     {copied ? (
-                      <Check className="h-3.5 w-3.5 text-green-500" />
+                      <Check className="h-4 w-4 text-green-500" />
                     ) : (
-                      <Copy className="h-3.5 w-3.5" />
+                      <Copy className="h-4 w-4" />
                     )}
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 w-6 p-0"
+                    className="h-7 w-7 p-0"
                     onClick={() => setShowQR(true)}
                   >
-                    <QrCode className="h-3.5 w-3.5" />
+                    <QrCode className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
             )}
           </div>
+        </div>
+
+        {/* Quick Actions - Venetian Style */}
+        <Card className="p-6">
+          <h2 className="text-xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Azioni Rapide
+          </h2>
           <div className="flex flex-wrap gap-2">
             {isAdmin && (
               <Link to="/admin">
-                <Button variant="outline" size="sm">
-                  <Shield className="h-4 w-4 mr-2" />
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Shield className="h-4 w-4" />
                   Admin
                 </Button>
               </Link>
             )}
             <Link to="/">
-              <Button variant="outline" size="sm">
-                <Home className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="sm" className="gap-2">
+                <Home className="h-4 w-4" />
                 Home
               </Button>
             </Link>
             <Link to="/profile">
-              <Button variant="outline" size="sm">
-                <User className="h-4 w-4 mr-2" />
-                Profile
+              <Button variant="outline" size="sm" className="gap-2">
+                <User className="h-4 w-4" />
+                Profilo
               </Button>
             </Link>
             <Link to="/analytics">
-              <Button variant="outline" size="sm">
-                <TrendingUp className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="sm" className="gap-2">
+                <TrendingUp className="h-4 w-4" />
                 Analytics
               </Button>
             </Link>
             <Link to="/activity">
-              <Button variant="outline" size="sm">
-                <Activity className="h-4 w-4 mr-2" />
-                Activity
+              <Button variant="outline" size="sm" className="gap-2">
+                <Activity className="h-4 w-4" />
+                Attività
               </Button>
             </Link>
             <Link to="/withdraw">
-              <Button variant="outline" size="sm">
-                <ArrowDownToLine className="h-4 w-4 mr-2" />
-                Withdraw
+              <Button variant="outline" size="sm" className="gap-2">
+                <ArrowDownToLine className="h-4 w-4" />
+                Preleva
               </Button>
             </Link>
             <Link to="/vaults">
-              <Button variant="outline" size="sm">
-                <Vault className="h-4 w-4 mr-2" />
-                Vaults
+              <Button variant="outline" size="sm" className="gap-2">
+                <Vault className="h-4 w-4" />
+                Vault
               </Button>
             </Link>
             <Link to="/referral">
-              <Button variant="outline" size="sm">
-                <Gift className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="sm" className="gap-2">
+                <Gift className="h-4 w-4" />
                 Referral
               </Button>
             </Link>
             <Link to="/leaderboard">
-              <Button variant="outline" size="sm">
-                <Trophy className="h-4 w-4 mr-2" />
-                Leaderboard
+              <Button variant="outline" size="sm" className="gap-2">
+                <Trophy className="h-4 w-4" />
+                Classifica
               </Button>
             </Link>
             {user && (
-              <Button variant="outline" size="sm" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
+              <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
+                <LogOut className="h-4 w-4" />
+                Esci
               </Button>
             )}
           </div>
-        </div>
+        </Card>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Wallet & Stats */}
           <div className="lg:col-span-1 space-y-6">
             {/* Wallet Connection */}
@@ -183,63 +197,73 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <DepositCard />
             
-            {/* Info Card */}
-            <div className="space-y-4">
-              <div className="p-6 border-2 border-primary/20 rounded-lg bg-primary/5">
-                <h3 className="font-semibold text-lg mb-3">How it Works</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary font-bold">1.</span>
-                    <span>Connect your MetaMask (Base) or Phantom (Solana) wallet</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary font-bold">2.</span>
-                    <span>Deposit ETH to start earning points</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary font-bold">3.</span>
-                    <span>Earn 1000 points per ETH deposited</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary font-bold">4.</span>
-                    <span>Climb tiers: Bronze → Silver → Gold → Platinum → Diamond</span>
-                  </li>
-                </ul>
-              </div>
+              {/* Info Card - Venetian Style */}
+              <div className="space-y-4">
+                <Card className="p-6 border-primary/20 bg-primary/5">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Coins className="w-5 h-5 text-accent" />
+                    <h3 className="font-bold text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
+                      Come Funziona
+                    </h3>
+                  </div>
+                  <ul className="space-y-3 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <span className="text-accent font-bold text-base">1.</span>
+                      <span>Connetti il tuo wallet MetaMask (Base) o Phantom (Solana)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-accent font-bold text-base">2.</span>
+                      <span>Deposita ETH per iniziare a guadagnare punti</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-accent font-bold text-base">3.</span>
+                      <span>Guadagna 1000 punti per ogni ETH depositato</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-accent font-bold text-base">4.</span>
+                      <span>Scala i livelli: Bronzo → Argento → Oro → Platino → Diamante</span>
+                    </li>
+                  </ul>
+                </Card>
 
-              <div className="p-6 border-2 border-secondary/20 rounded-lg bg-secondary/5">
-                <h3 className="font-semibold text-lg mb-3">Tier Benefits</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Bronze</span>
-                    <span className="font-semibold">0+ points</span>
+                <Card className="p-6 border-secondary/20 bg-secondary/5">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Trophy className="w-5 h-5 text-accent" />
+                    <h3 className="font-bold text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
+                      Benefici per Livello
+                    </h3>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Silver</span>
-                    <span className="font-semibold">1,000+ points</span>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">🥉 Bronzo</span>
+                      <span className="font-semibold">0+ punti</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">🥈 Argento</span>
+                      <span className="font-semibold">1,000+ punti</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">🥇 Oro</span>
+                      <span className="font-semibold">10,000+ punti</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">💎 Platino</span>
+                      <span className="font-semibold">50,000+ punti</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">💠 Diamante</span>
+                      <span className="font-semibold">100,000+ punti</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Gold</span>
-                    <span className="font-semibold">10,000+ points</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Platinum</span>
-                    <span className="font-semibold">50,000+ points</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Diamond</span>
-                    <span className="font-semibold">100,000+ points</span>
-                  </div>
-                </div>
+                </Card>
               </div>
             </div>
           </div>
         </div>
-        </div>
 
         {/* Transaction History */}
         {isConnected && user && (
-          <div className="mb-8">
+          <div>
             <TransactionHistory />
           </div>
         )}
@@ -248,9 +272,11 @@ const Dashboard = () => {
         <Dialog open={showQR} onOpenChange={setShowQR}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Wallet Address QR Code</DialogTitle>
+              <DialogTitle style={{ fontFamily: "'Playfair Display', serif" }}>
+                QR Code Indirizzo Wallet
+              </DialogTitle>
               <DialogDescription>
-                Scan this QR code to get the wallet address
+                Scansiona questo QR code per ottenere l'indirizzo del wallet
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col items-center gap-4 py-4">
@@ -267,12 +293,12 @@ const Dashboard = () => {
                 {copied ? (
                   <>
                     <Check className="h-4 w-4 mr-2 text-green-500" />
-                    Copied!
+                    Copiato!
                   </>
                 ) : (
                   <>
                     <Copy className="h-4 w-4 mr-2" />
-                    Copy Address
+                    Copia Indirizzo
                   </>
                 )}
               </Button>
@@ -280,7 +306,7 @@ const Dashboard = () => {
           </DialogContent>
         </Dialog>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

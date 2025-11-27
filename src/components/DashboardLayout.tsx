@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useWalletVenetian } from "@/contexts/WalletContext";
+import { useAdminCheck } from "@/hooks/useAdminCheck";
 import { 
   LayoutDashboard, 
   Vault, 
@@ -9,7 +10,13 @@ import {
   X,
   Coins,
   TrendingUp,
-  History
+  History,
+  Shield,
+  Activity,
+  ArrowDownToLine,
+  Gift,
+  Trophy,
+  BarChart3
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -20,17 +27,31 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { address, balance, disconnectWallet } = useWalletVenetian();
+  const { isAdmin } = useAdminCheck();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Navigation items - aggiornati con tutti i link
   const navigation = [
-    { name: "Dashboard", href: "/app", icon: LayoutDashboard },
-    { name: "Vault", href: "/app/vault", icon: Vault },
-    { name: "Portafoglio", href: "/app/portfolio", icon: TrendingUp },
-    { name: "Transazioni", href: "/app/transactions", icon: History },
-    { name: "Profilo", href: "/app/profile", icon: User },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Vault", href: "/vaults", icon: Vault },
+    { name: "Portafoglio", href: "/portfolio", icon: TrendingUp },
+    { name: "Transazioni", href: "/transactions", icon: History },
+    { name: "Preleva", href: "/withdraw", icon: ArrowDownToLine },
+    { name: "Analytics", href: "/analytics", icon: BarChart3 },
+    { name: "Attività", href: "/activity", icon: Activity },
+    { name: "Referral", href: "/referral", icon: Gift },
+    { name: "Classifica", href: "/leaderboard", icon: Trophy },
+    { name: "Profilo", href: "/profile", icon: User },
   ];
+
+  // Add Admin link if user is admin
+  const adminNavigation = isAdmin ? [
+    { name: "Admin", href: "/admin", icon: Shield }
+  ] : [];
+
+  const allNavigation = [...adminNavigation, ...navigation];
 
   const handleDisconnect = () => {
     disconnectWallet();
@@ -60,12 +81,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center justify-between p-6 border-b border-border">
-            <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <Coins className="w-6 h-6 text-accent" />
               <span className="text-xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
                 NEXTBLOCK
               </span>
-            </div>
+            </Link>
             <Button
               variant="ghost"
               size="icon"
@@ -77,22 +98,22 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
-            {navigation.map((item) => {
-              const isActive = location === item.href;
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+            {allNavigation.map((item) => {
+              const isActive = location.pathname === item.href;
               return (
-                <Link key={item.name} href={item.href}>
-                  <a
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-muted text-foreground"
-                    }`}
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span className="font-medium">{item.name}</span>
-                  </a>
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-muted text-foreground"
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="font-medium">{item.name}</span>
                 </Link>
               );
             })}
@@ -100,16 +121,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* User info & disconnect */}
           <div className="p-4 border-t border-border">
-            <div className="mb-3 p-3 bg-muted/50 rounded-lg">
-              <p className="text-xs text-muted-foreground mb-1">Wallet Connesso</p>
-              <p className="text-sm font-mono font-semibold">
-                {address ? formatAddress(address) : ""}
-              </p>
-              <p className="text-xs text-muted-foreground mt-2">Saldo NXB</p>
-              <p className="text-lg font-bold text-accent">
-                {balance.toFixed(2)}
-              </p>
-            </div>
+            {address && (
+              <div className="mb-3 p-3 bg-muted/50 rounded-lg">
+                <p className="text-xs text-muted-foreground mb-1">Wallet Connesso</p>
+                <p className="text-sm font-mono font-semibold">
+                  {formatAddress(address)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">Saldo NXB</p>
+                <p className="text-lg font-bold text-accent">
+                  {balance.toFixed(2)}
+                </p>
+              </div>
+            )}
             <Button
               variant="outline"
               className="w-full"
@@ -137,16 +160,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </Button>
             <div className="flex-1 lg:flex-none">
               <h1 className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                {navigation.find((item) => item.href === location)?.name || "Dashboard"}
+                {allNavigation.find((item) => item.href === location.pathname)?.name || "Dashboard"}
               </h1>
             </div>
             <div className="hidden lg:flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-xs text-muted-foreground">Wallet</p>
-                <p className="text-sm font-mono font-semibold">
-                  {address ? formatAddress(address) : ""}
-                </p>
-              </div>
+              {address && (
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground">Wallet</p>
+                  <p className="text-sm font-mono font-semibold">
+                    {formatAddress(address)}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </header>

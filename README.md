@@ -286,3 +286,4 @@ Questo progetto si basa su e adatta codice da:
 ## Disclaimer
 
 Questo software è fornito "as is", senza garanzie di alcun tipo. Utilizzare a proprio rischio.
+# Force rebuild Thu Nov 27 17:49:48 EST 2025

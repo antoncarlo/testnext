@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useWallet } from '@/hooks/useWallet';
+import { useConnectWallet } from '@web3-onboard/react';
 import { useAuth } from '@/hooks/useAuth';
 import { useActivityLogger } from '@/hooks/useActivityLogger';
 import { useToast } from '@/hooks/use-toast';
@@ -18,7 +18,13 @@ export const DepositCard = () => {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [txStatus, setTxStatus] = useState<string>('');
-  const { address, chainType, isConnected } = useWallet();
+  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  
+  // Get wallet info from Web3-Onboard
+  const address = wallet?.accounts[0]?.address || null;
+  const isConnected = !!wallet;
+  const chainId = wallet?.chains[0]?.id;
+  const chainType = chainId === '0x2105' ? 'base' : 'solana'; // 0x2105 = Base mainnet
   const { user } = useAuth();
   const { logActivity } = useActivityLogger();
   const { toast } = useToast();

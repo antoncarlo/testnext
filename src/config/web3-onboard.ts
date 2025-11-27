@@ -79,7 +79,7 @@ const web3Onboard = init({
     },
   },
   connect: {
-    autoConnectLastWallet: false, // Prevent infinite loops
+    autoConnectLastWallet: true, // Auto-reconnect last wallet
     autoConnectAllPreviousWallet: false,
   },
   notify: {

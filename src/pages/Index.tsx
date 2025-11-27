@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Index() {
   const [isVisible, setIsVisible] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const { isConnected, connectWallet } = useWalletVenetian();
   const navigate = useNavigate();
@@ -16,10 +17,19 @@ export default function Index() {
     if (isConnected) {
       navigate("/dashboard");
     } else {
+      setIsConnecting(true);
       await connectWallet();
-      navigate("/dashboard");
+      // Don't navigate here - let useEffect handle it
     }
   };
+
+  // Navigate to dashboard when wallet connects
+  useEffect(() => {
+    if (isConnecting && isConnected) {
+      navigate("/dashboard");
+      setIsConnecting(false);
+    }
+  }, [isConnected, isConnecting, navigate]);
 
   useEffect(() => {
     setIsVisible(true);

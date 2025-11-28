@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
-import { useWalletImproved } from './useWalletImproved';
+import { useConnectWallet } from '@web3-onboard/react';
 
 export interface DefiStrategy {
   id: string;
@@ -28,7 +28,8 @@ export interface UserDefiPosition {
 
 export const useUserDefiPositions = () => {
   const { user } = useAuth();
-  const { address } = useWalletImproved();
+  const [{ wallet }] = useConnectWallet();
+  const address = wallet?.accounts[0]?.address;
   const [positions, setPositions] = useState<UserDefiPosition[]>([]);
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState({

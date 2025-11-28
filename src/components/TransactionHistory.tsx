@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useWalletImproved } from '@/hooks/useWalletImproved';
+import { useConnectWallet } from '@web3-onboard/react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -21,7 +21,8 @@ interface Deposit {
 
 export const TransactionHistory = () => {
   const { user } = useAuth();
-  const { address } = useWalletImproved();
+  const [{ wallet }] = useConnectWallet();
+  const address = wallet?.accounts[0]?.address;
   const [deposits, setDeposits] = useState<Deposit[]>([]);
   const [loading, setLoading] = useState(true);
 

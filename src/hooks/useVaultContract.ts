@@ -26,6 +26,62 @@ export function useVaultContract() {
   const [vaultData, setVaultData] = useState<VaultData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [wrongNetwork, setWrongNetwork] = useState(false);
+
+  // Check if wallet is on correct network
+  const checkNetwork = async () => {
+    if (!wallet) {
+      setWrongNetwork(false);
+      return true;
+    }
+
+    const chainId = wallet.chains[0]?.id;
+    const isCorrectNetwork = chainId === '0x14a34' || chainId === '0x14A34'; // Base Sepolia
+    setWrongNetwork(!isCorrectNetwork);
+    return isCorrectNetwork;
+  };
+
+  // Switch to Base Sepolia network
+  const switchToBaseSepolia = async () => {
+    if (!wallet?.provider) return;
+
+    try {
+      await wallet.provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x14A34' }], // Base Sepolia
+      });
+      setWrongNetwork(false);
+    } catch (switchError: any) {
+      // This error code indicates that the chain has not been added to MetaMask
+      if (switchError.code === 4902) {
+        try {
+          await wallet.provider.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: '0x14A34',
+                chainName: 'Base Sepolia',
+                nativeCurrency: {
+                  name: 'Ethereum',
+                  symbol: 'ETH',
+                  decimals: 18,
+                },
+                rpcUrls: ['https://sepolia.base.org'],
+                blockExplorerUrls: ['https://sepolia.basescan.org'],
+              },
+            ],
+          });
+          setWrongNetwork(false);
+        } catch (addError) {
+          console.error('Error adding Base Sepolia network:', addError);
+          throw new Error('Failed to add Base Sepolia network');
+        }
+      } else {
+        console.error('Error switching to Base Sepolia:', switchError);
+        throw new Error('Failed to switch to Base Sepolia network');
+      }
+    }
+  };
 
   // Get provider and signer
   const getProvider = () => {
@@ -165,8 +221,12 @@ export function useVaultContract() {
 
   // Auto-fetch on mount and wallet change
   useEffect(() => {
-    fetchVaultData();
-  }, [wallet?.accounts[0]?.address]);
+    const init = async () => {
+      await checkNetwork();
+      await fetchVaultData();
+    };
+    init();
+  }, [wallet?.accounts[0]?.address, wallet?.chains[0]?.id]);
 
   return {
     vaultData,
@@ -176,6 +236,8 @@ export function useVaultContract() {
     withdraw,
     refresh: fetchVaultData,
     isConnected: !!wallet,
+    wrongNetwork,
+    switchToBaseSepolia,
   };
 }
 

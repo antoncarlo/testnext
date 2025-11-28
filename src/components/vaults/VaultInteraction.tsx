@@ -14,7 +14,7 @@ import { useVaultContract, formatVaultBalance, formatAPY } from '@/hooks/useVaul
 import { useToast } from '@/hooks/use-toast';
 
 export function VaultInteraction() {
-  const { vaultData, isLoading, error, deposit, withdraw, refresh, isConnected } = useVaultContract();
+  const { vaultData, isLoading, error, deposit, withdraw, refresh, isConnected, wrongNetwork, switchToBaseSepolia } = useVaultContract();
   const { toast } = useToast();
   
   const [depositAmount, setDepositAmount] = useState('');
@@ -217,6 +217,23 @@ export function VaultInteraction() {
             </Alert>
           )}
           
+          {isConnected && wrongNetwork && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription className="flex items-center justify-between">
+                <span>You are connected to the wrong network. Please switch to Base Sepolia.</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={switchToBaseSepolia}
+                  className="ml-4"
+                >
+                  Switch Network
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+          
           {vaultData.emergencyMode && (
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
@@ -241,7 +258,7 @@ export function VaultInteraction() {
               />
               <Button
                 onClick={handleDeposit}
-                disabled={!isConnected || vaultData.emergencyMode || isDepositing || !depositAmount}
+                disabled={!isConnected || wrongNetwork || vaultData.emergencyMode || isDepositing || !depositAmount}
                 className="min-w-[120px]"
               >
                 {isDepositing ? (
@@ -272,7 +289,7 @@ export function VaultInteraction() {
               />
               <Button
                 onClick={handleWithdraw}
-                disabled={!isConnected || isWithdrawing || !withdrawAmount || vaultData.userBalance === BigInt(0)}
+                disabled={!isConnected || wrongNetwork || isWithdrawing || !withdrawAmount || vaultData.userBalance === BigInt(0)}
                 variant="outline"
                 className="min-w-[120px]"
               >

@@ -1,20 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { useWalletImproved } from '@/hooks/useWalletImproved';
 import { Loader2 } from 'lucide-react';
+
+// Import the wallet context directly to check if it's available
+import { useConnectWallet } from '@web3-onboard/react';
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
-  const { address, isConnected } = useWalletImproved();
   const navigate = useNavigate();
+  
+  // Use Web3-Onboard hook directly (it's safe and doesn't throw)
+  const [{ wallet }] = useConnectWallet();
+  const isWalletConnected = !!wallet;
 
   useEffect(() => {
     // Allow access if user is logged in OR wallet is connected
-    if (!loading && !user && !isConnected) {
+    if (!loading && !user && !isWalletConnected) {
       navigate('/auth');
     }
-  }, [user, loading, isConnected, navigate]);
+  }, [user, loading, isWalletConnected, navigate]);
 
   if (loading) {
     return (
@@ -25,7 +30,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   // Allow access if user is logged in OR wallet is connected
-  if (!user && !isConnected) {
+  if (!user && !isWalletConnected) {
     return null;
   }
 

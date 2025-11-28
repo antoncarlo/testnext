@@ -71,9 +71,9 @@ const Dashboard = () => {
               <div className="flex items-center gap-2 mt-4">
                 <div className="flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border shadow-sm">
                   <div className="flex items-center gap-2">
-                    <div className={`h-2.5 w-2.5 rounded-full ${walletType === 'metamask' ? 'bg-orange-500' : 'bg-purple-500'}`} />
+                    <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />
                     <span className="text-xs font-medium text-muted-foreground">
-                      {walletType === 'metamask' ? 'MetaMask' : 'Phantom'} ({chainType === 'base' ? 'Base' : 'Solana'})
+                      {walletType || 'Wallet'} ({chainType === 'base-sepolia' ? 'Base Sepolia' : chainType === 'base' ? 'Base' : 'Unknown Chain'})
                     </span>
                   </div>
                   <div className="h-4 w-px bg-border" />
@@ -138,7 +138,7 @@ const Dashboard = () => {
                   <ul className="space-y-3 text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <span className="text-accent font-bold text-base">1.</span>
-                      <span>Connetti il tuo wallet MetaMask (Base) o Phantom (Solana)</span>
+                      <span>Connetti il tuo wallet su Base Chain (MetaMask, Trust Wallet, WalletConnect)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-accent font-bold text-base">2.</span>
@@ -214,7 +214,7 @@ const Dashboard = () => {
               </div>
               <div className="text-center">
                 <p className="text-sm text-muted-foreground mb-1">
-                  {walletType === 'metamask' ? 'MetaMask' : 'Phantom'} - {chainType === 'base' ? 'Base' : 'Solana'}
+                  {walletType || 'Wallet'} - {chainType === 'base-sepolia' ? 'Base Sepolia' : chainType === 'base' ? 'Base' : 'Unknown Chain'}
                 </p>
                 <p className="font-mono text-xs break-all px-4">{address}</p>
               </div>

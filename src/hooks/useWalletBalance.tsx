@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+// Solana imports removed - Base Chain only
 import { useWallet } from '@/contexts/WalletContext';
 
 export const useWalletBalance = () => {
@@ -17,19 +17,15 @@ export const useWalletBalance = () => {
     const fetchBalance = async () => {
       setLoading(true);
       try {
-        if (chainType === 'base') {
-          // Fetch ETH balance on Base
-          const provider = new ethers.JsonRpcProvider('https://mainnet.base.org');
+        if (chainType === 'base' || chainType === 'base-sepolia') {
+          // Fetch ETH balance on Base or Base Sepolia
+          const rpcUrl = chainType === 'base-sepolia' 
+            ? 'https://sepolia.base.org'
+            : 'https://mainnet.base.org';
+          const provider = new ethers.JsonRpcProvider(rpcUrl);
           const balanceWei = await provider.getBalance(address);
           const balanceEth = ethers.formatEther(balanceWei);
           setBalance(parseFloat(balanceEth).toFixed(4));
-        } else if (chainType === 'solana') {
-          // Fetch SOL balance on Solana
-          const connection = new Connection('https://api.mainnet-beta.solana.com');
-          const publicKey = new PublicKey(address);
-          const balanceLamports = await connection.getBalance(publicKey);
-          const balanceSol = balanceLamports / LAMPORTS_PER_SOL;
-          setBalance(balanceSol.toFixed(4));
         }
       } catch (error) {
         console.error('Error fetching balance:', error);
@@ -47,5 +43,5 @@ export const useWalletBalance = () => {
     return () => clearInterval(interval);
   }, [address, chainType, isConnected]);
 
-  return { balance, loading, symbol: chainType === 'base' ? 'ETH' : 'SOL' };
+  return { balance, loading, symbol: 'ETH' };
 };

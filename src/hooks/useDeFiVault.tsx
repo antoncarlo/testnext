@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useVaultAnalytics } from './useVaultAnalytics';
 import { useActiveAccount, useReadContract, useSendTransaction } from 'thirdweb/react';
 import { prepareContractCall, getContract, readContract } from 'thirdweb';
 import { baseSepolia } from 'thirdweb/chains';
@@ -98,6 +99,7 @@ interface VaultActions {
 export function useDeFiVault(): VaultData & VaultActions {
   const account = useActiveAccount();
   const { mutateAsync: sendTransaction } = useSendTransaction();
+  const analytics = useVaultAnalytics();
 
   const [vaultData, setVaultData] = useState<VaultData>({
     userBalance: 0n,
@@ -179,6 +181,8 @@ export function useDeFiVault(): VaultData & VaultActions {
       throw new Error('Wallet not connected');
     }
 
+    const amountEth = formatVaultBalance(amount);
+
     try {
       const transaction = prepareContractCall({
         contract,
@@ -187,21 +191,31 @@ export function useDeFiVault(): VaultData & VaultActions {
         value: amount,
       });
 
-      await sendTransaction(transaction);
+      const result = await sendTransaction(transaction);
+      
+      // Track successful deposit
+      await analytics.trackDeposit(amountEth, result.transactionHash);
       
       // Refresh data after deposit
       await fetchVaultData();
     } catch (error) {
+      // Track failed deposit
+      await analytics.trackError('Deposit failed', {
+        amount: amountEth,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
       console.error('Error depositing:', error);
       throw error;
     }
-  }, [account, contract, sendTransaction, fetchVaultData]);
+  }, [account, contract, sendTransaction, fetchVaultData, analytics]);
 
   // Withdraw function
   const withdraw = useCallback(async (amount: bigint) => {
     if (!account) {
       throw new Error('Wallet not connected');
     }
+
+    const amountEth = formatVaultBalance(amount);
 
     try {
       const transaction = prepareContractCall({
@@ -210,15 +224,23 @@ export function useDeFiVault(): VaultData & VaultActions {
         params: [amount],
       });
 
-      await sendTransaction(transaction);
+      const result = await sendTransaction(transaction);
+      
+      // Track successful withdraw
+      await analytics.trackWithdraw(amountEth, result.transactionHash);
       
       // Refresh data after withdrawal
       await fetchVaultData();
     } catch (error) {
+      // Track failed withdraw
+      await analytics.trackError('Withdraw failed', {
+        amount: amountEth,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
       console.error('Error withdrawing:', error);
       throw error;
     }
-  }, [account, contract, sendTransaction, fetchVaultData]);
+  }, [account, contract, sendTransaction, fetchVaultData, analytics]);
 
   // Refresh function
   const refresh = useCallback(async () => {
@@ -238,6 +260,13 @@ export function useDeFiVault(): VaultData & VaultActions {
 
     return () => clearInterval(interval);
   }, [fetchVaultData]);
+
+  // Track view on mount
+  useEffect(() => {
+    if (account?.address) {
+      analytics.trackView();
+    }
+  }, [account?.address, analytics]);
 
   return {
     ...vaultData,

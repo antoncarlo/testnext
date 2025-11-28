@@ -36,6 +36,7 @@ const DashboardLayout = memo(function DashboardLayout({ children }: DashboardLay
   const navigation = useMemo(() => [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Vault", href: "/vaults", icon: Vault },
+    { name: "DeFi Vault", href: "/defivault", icon: Shield },
     { name: "Portafoglio", href: "/portfolio", icon: TrendingUp },
     { name: "Transazioni", href: "/transactions", icon: History },
     { name: "Preleva", href: "/withdraw", icon: ArrowDownToLine },

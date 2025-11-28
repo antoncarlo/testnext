@@ -37,9 +37,15 @@ export function useVaultContract() {
   };
 
   const getSigner = async () => {
-    const provider = getProvider();
-    if (!provider) return null;
-    return await provider.getSigner();
+    try {
+      const provider = getProvider();
+      if (!provider) return null;
+      if (!wallet) return null; // No wallet connected
+      return await provider.getSigner();
+    } catch (error) {
+      // Handle "no such account" error when wallet not connected
+      return null;
+    }
   };
 
   const getContract = async (needsSigner = false) => {

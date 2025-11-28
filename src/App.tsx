@@ -39,7 +39,6 @@ const Withdraw = lazy(() => import("./pages/Withdraw"));
 const Vaults = lazy(() => import("./pages/Vaults"));
 const Referral = lazy(() => import("./pages/Referral"));
 const Transactions = lazy(() => import("./pages/Transactions"));
-const DeFiVault = lazy(() => import("./pages/DeFiVault"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -113,13 +112,6 @@ const App = () => (
                     <ProtectedRoute>
                       <DashboardLayout>
                         <Vaults />
-                      </DashboardLayout>
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/defivault" element={
-                    <ProtectedRoute>
-                      <DashboardLayout>
-                        <DeFiVault />
                       </DashboardLayout>
                     </ProtectedRoute>
                   } />

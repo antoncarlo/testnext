@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, TrendingUp, DollarSign, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { DeFiVaultCard } from './DeFiVaultCard';
+
 
 interface Vault {
   id: string;
@@ -64,10 +64,7 @@ export const VaultsList = ({ onSelectVault }: VaultsListProps) => {
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {/* Featured DeFi Vault */}
-      <DeFiVaultCard />
-      
-      {/* Other Vaults from Database */}
+      {/* Vaults from Database */}
       {vaults.map((vault) => (
         <Card key={vault.id} className="hover:border-primary/50 transition-colors">
           <CardHeader>

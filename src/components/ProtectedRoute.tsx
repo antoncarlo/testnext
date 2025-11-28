@@ -1,17 +1,20 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useWalletImproved } from '@/hooks/useWalletImproved';
 import { Loader2 } from 'lucide-react';
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
+  const { address, isConnected } = useWalletImproved();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !user) {
+    // Allow access if user is logged in OR wallet is connected
+    if (!loading && !user && !isConnected) {
       navigate('/auth');
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, isConnected, navigate]);
 
   if (loading) {
     return (
@@ -21,7 +24,8 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!user) {
+  // Allow access if user is logged in OR wallet is connected
+  if (!user && !isConnected) {
     return null;
   }
 

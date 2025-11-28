@@ -18,7 +18,12 @@
     ]
   },
   "deploymentDate": "2025-11-28T09:53:05.854Z",
-  "status": "pending",
+  "deployedAddress": "0x360cD279d4Da74688ADA2B1274BE2AE3C0DA08e1",
+  "deploymentTxHash": "0x289b788e9651dd2b77d1f44214d02dc2a39ebd4743b0dd4d96b1c8a7d181095e",
+  "deploymentBlock": 34279083,
+  "deploymentMethod": "Foundry (forge script)",
+  "actualDeploymentDate": "2024-11-27T20:00:00.000Z",
+  "status": "deployed",
   "notes": [
     "Contract needs to be deployed manually using one of the methods above",
     "After deployment, update VITE_VAULT_ADDRESS environment variable",

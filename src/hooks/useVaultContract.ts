@@ -200,6 +200,46 @@ export function useVaultContract() {
 
       // Save to database after successful deposit
       try {
+        // Get or create user profile from wallet address
+        let userId = user?.id;
+        
+        if (!userId && userAddress) {
+          // Try to find existing profile by wallet address
+          const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('wallet_address', userAddress.toLowerCase())
+            .single();
+
+          if (existingProfile) {
+            userId = existingProfile.id;
+          } else {
+            // Create anonymous profile for wallet-only user
+            const { data: newProfile, error: profileError } = await supabase
+              .from('profiles')
+              .insert({
+                wallet_address: userAddress.toLowerCase(),
+                total_points: 0,
+              })
+              .select('id')
+              .single();
+
+            if (profileError) {
+              console.error('Error creating profile:', profileError);
+              await fetchVaultData();
+              return;
+            }
+            
+            userId = newProfile?.id;
+          }
+        }
+
+        if (!userId) {
+          console.log('Could not determine user ID, skipping database save');
+          await fetchVaultData();
+          return;
+        }
+
         // Calculate points (1000 points per ETH * multiplier)
         const pointsMultiplier = vaultData?.pointsMultiplier ? Number(vaultData.pointsMultiplier) : 2;
         const pointsAwarded = parseFloat(amount) * 1000 * pointsMultiplier;
@@ -208,7 +248,7 @@ export function useVaultContract() {
         const { data: depositData, error: depositError } = await supabase
           .from('deposits')
           .insert({
-            user_id: user?.id,
+            user_id: userId,
             chain: 'base',
             amount: parseFloat(amount),
             tx_hash: tx.hash,
@@ -226,7 +266,7 @@ export function useVaultContract() {
           const { error: positionError } = await supabase
             .from('user_defi_positions')
             .insert({
-              user_id: user?.id,
+              user_id: userId,
               strategy_id: '55814f2a-1725-4f23-9760-e2591dd50d09', // DeFiVault ID
               amount: parseFloat(amount),
               entry_price: parseFloat(amount),
@@ -244,7 +284,7 @@ export function useVaultContract() {
           const { error: pointsError } = await supabase
             .from('points_history')
             .insert({
-              user_id: user?.id,
+              user_id: userId,
               points: pointsAwarded,
               action_type: 'deposit',
               description: `Deposited ${amount} ETH to NextBlock DeFi Vault`,
@@ -257,7 +297,7 @@ export function useVaultContract() {
 
           // 4. Update user total points
           const { error: profileError } = await supabase.rpc('increment_user_points', {
-            user_id: user?.id,
+            user_id: userId,
             points_to_add: pointsAwarded,
           });
 
@@ -267,7 +307,7 @@ export function useVaultContract() {
             const { data: profile } = await supabase
               .from('profiles')
               .select('total_points')
-              .eq('id', user?.id)
+              .eq('id', userId)
               .single();
 
             if (profile) {
@@ -276,13 +316,13 @@ export function useVaultContract() {
                 .update({
                   total_points: (profile.total_points || 0) + pointsAwarded,
                 })
-                .eq('id', user?.id);
+                .eq('id', userId);
             }
           }
 
           // 5. Save user activity
           await supabase.from('user_activity').insert({
-            user_id: user?.id,
+            user_id: userId,
             activity_type: 'deposit',
             description: `Deposited ${amount} ETH to NextBlock DeFi Vault`,
             metadata: {

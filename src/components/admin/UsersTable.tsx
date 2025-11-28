@@ -126,7 +126,7 @@ export const UsersTable = () => {
                 <TableRow key={user.id}>
                   <TableCell>{user.email || 'N/A'}</TableCell>
                   <TableCell className="font-mono text-sm">
-                    {user.wallet_address.slice(0, 6)}...{user.wallet_address.slice(-4)}
+                    {user.wallet_address ? `${user.wallet_address.slice(0, 6)}...${user.wallet_address.slice(-4)}` : 'N/A'}
                   </TableCell>
                   <TableCell className="font-semibold">
                     {Number(user.total_points).toLocaleString()}

@@ -118,17 +118,8 @@ export const DepositCard = () => {
     setTxHash('');
 
     try {
-      // Get current user
+      // Get current user (optional - for saving to database)
       const { data: { user: currentUser } } = await supabase.auth.getUser();
-      
-      if (!currentUser) {
-        toast({
-          title: 'Authentication Required',
-          description: 'Please sign in to continue',
-          variant: 'destructive',
-        });
-        return;
-      }
 
       // Get the provider from Web3-Onboard wallet
       if (!wallet?.provider) {
@@ -189,19 +180,20 @@ export const DepositCard = () => {
       // Calculate points earned
       const pointsEarned = depositAmount * 1000 * selectedVaultData.points_multiplier;
 
-      // Insert position record
-      const { error: dbError } = await supabase.from('user_defi_positions').insert({
-        user_id: currentUser.id,
-        strategy_id: selectedVault,
-        amount: depositAmount,
-        transaction_hash: tx.hash,
-        chain: chainType,
-        status: 'active',
-      });
+      // Insert position record (only if user is authenticated)
+      if (currentUser) {
+        const { error: dbError } = await supabase.from('user_defi_positions').insert({
+          user_id: currentUser.id,
+          strategy_id: selectedVault,
+          amount: depositAmount,
+          transaction_hash: tx.hash,
+          chain: chainType,
+          status: 'active',
+        });
 
-      if (dbError) {
-        console.error('Database error:', dbError);
-        throw new Error('Failed to save position record');
+        if (dbError) {
+          console.warn('Database error (non-critical):', dbError);
+        }
       }
 
       toast({

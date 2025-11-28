@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { DEFIVAULT_ABI, DEFIVAULT_ADDRESS, BASE_SEPOLIA_CHAIN_ID } from '@/contracts/DeFiVault.abi';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
 
 export interface VaultData {
   vaultName: string;
@@ -23,6 +25,7 @@ export interface VaultData {
 
 export function useVaultContract() {
   const [{ wallet }] = useConnectWallet();
+  const { user } = useAuth();
   const [vaultData, setVaultData] = useState<VaultData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -188,10 +191,113 @@ export function useVaultContract() {
       setError(null);
 
       const contract = await getContract(true);
+      const signer = await getSigner();
+      const userAddress = signer ? await signer.getAddress() : null;
       const value = ethers.parseEther(amount);
 
       const tx = await contract.deposit({ value });
       await tx.wait();
+
+      // Save to database after successful deposit
+      try {
+        // Calculate points (1000 points per ETH * multiplier)
+        const pointsMultiplier = vaultData?.pointsMultiplier ? Number(vaultData.pointsMultiplier) : 2;
+        const pointsAwarded = parseFloat(amount) * 1000 * pointsMultiplier;
+
+        // 1. Save deposit transaction
+        const { data: depositData, error: depositError } = await supabase
+          .from('deposits')
+          .insert({
+            user_id: user?.id,
+            chain: 'base',
+            amount: parseFloat(amount),
+            tx_hash: tx.hash,
+            status: 'confirmed',
+            confirmed_at: new Date().toISOString(),
+            points_awarded: pointsAwarded,
+          })
+          .select()
+          .single();
+
+        if (depositError) {
+          console.error('Error saving deposit:', depositError);
+        } else if (depositData) {
+          // 2. Save user position
+          const { error: positionError } = await supabase
+            .from('user_defi_positions')
+            .insert({
+              user_id: user?.id,
+              strategy_id: '55814f2a-1725-4f23-9760-e2591dd50d09', // DeFiVault ID
+              amount: parseFloat(amount),
+              entry_price: parseFloat(amount),
+              current_value: parseFloat(amount),
+              points_earned: pointsAwarded,
+              status: 'active',
+              tx_hash: tx.hash,
+            });
+
+          if (positionError) {
+            console.error('Error saving position:', positionError);
+          }
+
+          // 3. Save points history
+          const { error: pointsError } = await supabase
+            .from('points_history')
+            .insert({
+              user_id: user?.id,
+              points: pointsAwarded,
+              action_type: 'deposit',
+              description: `Deposited ${amount} ETH to NextBlock DeFi Vault`,
+              deposit_id: depositData.id,
+            });
+
+          if (pointsError) {
+            console.error('Error saving points history:', pointsError);
+          }
+
+          // 4. Update user total points
+          const { error: profileError } = await supabase.rpc('increment_user_points', {
+            user_id: user?.id,
+            points_to_add: pointsAwarded,
+          });
+
+          if (profileError) {
+            console.error('Error updating profile points:', profileError);
+            // Fallback: update manually
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('total_points')
+              .eq('id', user?.id)
+              .single();
+
+            if (profile) {
+              await supabase
+                .from('profiles')
+                .update({
+                  total_points: (profile.total_points || 0) + pointsAwarded,
+                })
+                .eq('id', user?.id);
+            }
+          }
+
+          // 5. Save user activity
+          await supabase.from('user_activity').insert({
+            user_id: user?.id,
+            activity_type: 'deposit',
+            description: `Deposited ${amount} ETH to NextBlock DeFi Vault`,
+            metadata: {
+              amount,
+              tx_hash: tx.hash,
+              vault: 'NextBlock DeFi Vault',
+              points_awarded: pointsAwarded,
+              wallet_address: userAddress,
+            },
+          });
+        }
+      } catch (dbError) {
+        console.error('Database error (non-blocking):', dbError);
+        // Don't throw - deposit was successful on-chain
+      }
 
       // Refresh data after deposit
       await fetchVaultData();

@@ -16,6 +16,7 @@ export const useAdminCheck = () => {
       }
 
       try {
+        console.log('[useAdminCheck] Checking admin status for user:', user.id);
         const { data, error } = await supabase
           .from('user_roles')
           .select('role')
@@ -23,9 +24,13 @@ export const useAdminCheck = () => {
           .eq('role', 'admin')
           .maybeSingle();
 
+        console.log('[useAdminCheck] Query result:', { data, error });
+
         if (!error && data) {
+          console.log('[useAdminCheck] User is admin!');
           setIsAdmin(true);
         } else {
+          console.log('[useAdminCheck] User is NOT admin');
           setIsAdmin(false);
         }
       } catch (error) {

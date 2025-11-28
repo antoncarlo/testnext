@@ -1,0 +1,27 @@
+{
+  "network": "base-sepolia",
+  "contractName": "DeFiVault",
+  "constructorArgs": {
+    "vaultName": "NextBlock DeFi Vault",
+    "protocolType": "Yield Farming",
+    "baseAPY": 850,
+    "pointsMultiplier": 2,
+    "treasury": "0xb45b21d21035ff8149fcBf9a2c1a53F6BF86Dc54"
+  },
+  "treasuryMultisig": {
+    "address": "0xb45b21d21035ff8149fcBf9a2c1a53F6BF86Dc54",
+    "threshold": 2,
+    "signers": [
+      "0x9d606550aD9ea012c0415c6C37814f5266622ee5",
+      "0xB1135f0fb79452F5D38F83E53b28D113E9D63781",
+      "0xE499af7B8C1ba34E4F39B110797d8E64937496bd"
+    ]
+  },
+  "deploymentDate": "2025-11-28T09:53:05.854Z",
+  "status": "pending",
+  "notes": [
+    "Contract needs to be deployed manually using one of the methods above",
+    "After deployment, update VITE_VAULT_ADDRESS environment variable",
+    "Verify contract on BaseScan after deployment"
+  ]
+}

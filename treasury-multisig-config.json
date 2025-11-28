@@ -1,0 +1,54 @@
+{
+  "network": "base-sepolia",
+  "multisigAddress": "0xb45b21d21035ff8149fcBf9a2c1a53F6BF86Dc54",
+  "threshold": 2,
+  "numSigners": 3,
+  "signers": [
+    "0x9d606550aD9ea012c0415c6C37814f5266622ee5",
+    "0xB1135f0fb79452F5D38F83E53b28D113E9D63781",
+    "0xE499af7B8C1ba34E4F39B110797d8E64937496bd"
+  ],
+  "signerDetails": [
+    {
+      "index": 1,
+      "address": "0xE499af7B8C1ba34E4F39B110797d8E64937496bd",
+      "privateKey": "0xe960fd37c311c09b9c1f3e24a44ddfe8714a938258706fef1a93b416151edfc7",
+      "mnemonic": "hurdle cabbage wood coyote upon ability approve minor trouble ticket fresh prevent"
+    },
+    {
+      "index": 2,
+      "address": "0xB1135f0fb79452F5D38F83E53b28D113E9D63781",
+      "privateKey": "0x09b020d33cc5ac1f20b9abcf7e356afca5d00e5244865f456c6c71637ff96e16",
+      "mnemonic": "over denial omit alter afford steel wall concert promote beauty tell helmet"
+    },
+    {
+      "index": 3,
+      "address": "0x9d606550aD9ea012c0415c6C37814f5266622ee5",
+      "privateKey": "0x86f14c2d653408cace0d8efc7eb790d1ecf91b9b510f7c0f0eafb7e549ea378e",
+      "mnemonic": "catalog powder dose skate remind accuse impulse agree ritual omit slide number"
+    }
+  ],
+  "safeFactoryAddress": "0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2",
+  "safeSingletonAddress": "0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552",
+  "saltNonce": 1764323510829,
+  "setupData": "0xb63e800d0000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000030000000000000000000000009d606550ad9ea012c0415c6c37814f5266622ee5000000000000000000000000b1135f0fb79452f5d38f83e53b28d113e9d63781000000000000000000000000e499af7b8c1ba34e4f39b110797d8e64937496bd0000000000000000000000000000000000000000000000000000000000000000",
+  "deploymentDate": "2025-11-28T09:51:50.831Z",
+  "deploymentScript": {
+    "description": "To deploy this multisig, you need to:",
+    "steps": [
+      "1. Fund a deployer wallet with Base Sepolia ETH",
+      "2. Call createProxyWithNonce on Safe Factory",
+      "3. Or use Gnosis Safe UI: https://app.safe.global/new-safe/create?chain=basesep"
+    ],
+    "manualDeployment": {
+      "url": "https://app.safe.global/new-safe/create?chain=basesep",
+      "instructions": [
+        "1. Go to the URL above",
+        "2. Connect your wallet",
+        "3. Add the 3 signer addresses",
+        "4. Set threshold to 2",
+        "5. Deploy the Safe"
+      ]
+    }
+  }
+}

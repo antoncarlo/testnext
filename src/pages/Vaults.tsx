@@ -8,6 +8,7 @@ import { VaultsList } from '@/components/vaults/VaultsList';
 import { VaultDeposit } from '@/components/vaults/VaultDeposit';
 import { VaultPositions } from '@/components/vaults/VaultPositions';
 import { VaultAnalytics } from '@/components/vaults/VaultAnalytics';
+import { VaultInteraction } from '@/components/vaults/VaultInteraction';
 
 const Vaults = () => {
   usePageView('Vaults');
@@ -40,11 +41,15 @@ const Vaults = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="available" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs defaultValue="defivault" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="defivault" className="flex items-center gap-2">
+              <Vault className="h-4 w-4" />
+              DeFi Vault
+            </TabsTrigger>
             <TabsTrigger value="available" className="flex items-center gap-2">
               <Vault className="h-4 w-4" />
-              Available Vaults
+              Other Vaults
             </TabsTrigger>
             <TabsTrigger value="deposit" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
@@ -59,6 +64,10 @@ const Vaults = () => {
               Analytics
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="defivault">
+            <VaultInteraction />
+          </TabsContent>
 
           <TabsContent value="available">
             <VaultsList onSelectVault={setSelectedVault} />

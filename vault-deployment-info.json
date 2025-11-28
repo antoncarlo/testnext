@@ -6,10 +6,10 @@
     "protocolType": "Yield Farming",
     "baseAPY": 850,
     "pointsMultiplier": 2,
-    "treasury": "0xb45b21d21035ff8149fcBf9a2c1a53F6BF86Dc54"
+    "treasury": "0x9b0B5c2D51d1603408E66d0A850AC2823dD4cb49"
   },
   "treasuryMultisig": {
-    "address": "0xb45b21d21035ff8149fcBf9a2c1a53F6BF86Dc54",
+    "address": "0x9b0B5c2D51d1603408E66d0A850AC2823dD4cb49",
     "threshold": 2,
     "signers": [
       "0x9d606550aD9ea012c0415c6C37814f5266622ee5",

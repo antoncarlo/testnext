@@ -21,7 +21,7 @@
 
 ### Configurazione Completata
 
-✅ **Multisig Address:** `0xb45b21d21035ff8149fcBf9a2c1a53F6BF86Dc54`  
+✅ **Multisig Address:** `0x9b0B5c2D51d1603408E66d0A850AC2823dD4cb49`  
 ✅ **Threshold:** 2/3 (servono 2 firme su 3)  
 ✅ **Network:** Base Sepolia  
 
@@ -77,7 +77,7 @@ https://sepolia.basescan.org/address/0xb45b21d21035ff8149fcBf9a2c1a53F6BF86Dc54
 | **Protocol Type** | Yield Farming |
 | **Base APY** | 850 (8.50%) |
 | **Points Multiplier** | 2x |
-| **Treasury Address** | `0xb45b21d21035ff8149fcBf9a2c1a53F6BF86Dc54` |
+| **Treasury Address** | `0x9b0B5c2D51d1603408E66d0A850AC2823dD4cb49` |
 
 ### Metodi di Deployment
 
@@ -105,7 +105,7 @@ forge create contracts/DeFiVault.sol:DeFiVault \
     "Yield Farming" \
     850 \
     2 \
-    0xb45b21d21035ff8149fcBf9a2c1a53F6BF86Dc54
+    0x9b0B5c2D51d1603408E66d0A850AC2823dD4cb49
 ```
 
 #### Opzione 2: thirdweb Deploy
@@ -154,7 +154,7 @@ forge verify-contract \
     "Yield Farming" \
     850 \
     2 \
-    0xb45b21d21035ff8149fcBf9a2c1a53F6BF86Dc54)
+    0x9b0B5c2D51d1603408E66d0A850AC2823dD4cb49)
 ```
 
 ---

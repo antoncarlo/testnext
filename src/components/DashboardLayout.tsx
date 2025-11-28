@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useWalletVenetian } from "@/contexts/WalletContext";
 import { useAdminCheck } from "@/hooks/useAdminCheck";
+import { supabase } from "@/config/supabase";
 import { 
   LayoutDashboard, 
   Vault, 
@@ -52,8 +53,12 @@ const DashboardLayout = memo(function DashboardLayout({ children }: DashboardLay
 
   const allNavigation = [...adminNavigation, ...navigation];
 
-  const handleDisconnect = () => {
+  const handleDisconnect = async () => {
+    // Disconnect wallet
     disconnectWallet();
+    // Sign out from Supabase
+    await supabase.auth.signOut();
+    // Navigate to home
     navigate("/");
   };
 

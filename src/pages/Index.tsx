@@ -13,13 +13,11 @@ export default function Index() {
   const { isConnected, connectWallet } = useWalletVenetian();
   const navigate = useNavigate();
 
-  const handleGetStarted = async () => {
+  const handleGetStarted = () => {
     if (isConnected) {
       navigate("/dashboard");
     } else {
-      setIsConnecting(true);
-      await connectWallet();
-      // Don't navigate here - let useEffect handle it
+      navigate("/auth");
     }
   };
 
@@ -432,6 +430,7 @@ export default function Index() {
             <Button 
               size="lg" 
               className="bg-white text-primary hover:bg-white/90"
+              onClick={handleGetStarted}
             >
               Inizia Ora
             </Button>

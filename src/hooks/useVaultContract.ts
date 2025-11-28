@@ -29,8 +29,11 @@ export function useVaultContract() {
 
   // Get provider and signer
   const getProvider = () => {
-    if (!wallet) return null;
-    return new ethers.BrowserProvider(wallet.provider, 'any');
+    if (wallet) {
+      return new ethers.BrowserProvider(wallet.provider, 'any');
+    }
+    // Fallback to public RPC when wallet is not connected
+    return new ethers.JsonRpcProvider('https://sepolia.base.org');
   };
 
   const getSigner = async () => {
@@ -46,7 +49,6 @@ export function useVaultContract() {
       return new ethers.Contract(DEFIVAULT_ADDRESS, DEFIVAULT_ABI, signer);
     } else {
       const provider = getProvider();
-      if (!provider) throw new Error('Provider not available');
       return new ethers.Contract(DEFIVAULT_ADDRESS, DEFIVAULT_ABI, provider);
     }
   };
@@ -155,11 +157,9 @@ export function useVaultContract() {
     }
   };
 
-  // Auto-fetch on wallet change
+  // Auto-fetch on mount and wallet change
   useEffect(() => {
-    if (wallet) {
-      fetchVaultData();
-    }
+    fetchVaultData();
   }, [wallet?.accounts[0]?.address]);
 
   return {

@@ -93,26 +93,7 @@ export function VaultInteraction() {
     }
   };
 
-  if (!isConnected) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            NextBlock DeFi Vault
-          </CardTitle>
-          <CardDescription>Connect your wallet to interact with the vault</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Alert>
-            <AlertDescription>
-              Please connect your wallet to view vault details and make deposits/withdrawals.
-            </AlertDescription>
-          </Alert>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Removed isConnected check - now shows vault data even without wallet
 
   if (isLoading && !vaultData) {
     return (
@@ -228,6 +209,14 @@ export function VaultInteraction() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {!isConnected && (
+            <Alert>
+              <AlertDescription>
+                Connect your wallet to deposit or withdraw funds.
+              </AlertDescription>
+            </Alert>
+          )}
+          
           {vaultData.emergencyMode && (
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
@@ -252,7 +241,7 @@ export function VaultInteraction() {
               />
               <Button
                 onClick={handleDeposit}
-                disabled={vaultData.emergencyMode || isDepositing || !depositAmount}
+                disabled={!isConnected || vaultData.emergencyMode || isDepositing || !depositAmount}
                 className="min-w-[120px]"
               >
                 {isDepositing ? (
@@ -283,7 +272,7 @@ export function VaultInteraction() {
               />
               <Button
                 onClick={handleWithdraw}
-                disabled={isWithdrawing || !withdrawAmount || vaultData.userBalance === BigInt(0)}
+                disabled={!isConnected || isWithdrawing || !withdrawAmount || vaultData.userBalance === BigInt(0)}
                 variant="outline"
                 className="min-w-[120px]"
               >

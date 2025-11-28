@@ -143,7 +143,7 @@ export function useVaultContract() {
         contract.pointsMultiplier(),
         contract.treasury(),
         contract.totalValueLocked(),
-        userAddress !== ethers.ZeroAddress ? contract.getUserBalance(userAddress) : BigInt(0),
+        userAddress !== ethers.ZeroAddress ? contract.getBalance(userAddress) : BigInt(0),
         contract.emergencyMode(),
         contract.paused(),
         contract.owner(),

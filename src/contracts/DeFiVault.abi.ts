@@ -50,7 +50,7 @@ export const DEFIVAULT_ABI = [
   },
   {
     inputs: [{ internalType: "address", name: "user", type: "address" }],
-    name: "getUserBalance",
+    name: "getBalance",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",

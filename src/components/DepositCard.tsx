@@ -130,15 +130,15 @@ export const DepositCard = () => {
         return;
       }
 
-      // Get the provider from window.ethereum
-      if (!window.ethereum) {
-        throw new Error('No Web3 provider found. Please install MetaMask or use Trust Wallet.');
+      // Get the provider from Web3-Onboard wallet
+      if (!wallet?.provider) {
+        throw new Error('No wallet provider found. Please reconnect your wallet.');
       }
 
       setTxStatus('Connecting to wallet...');
       
-      // Create ethers provider and signer
-      const provider = new BrowserProvider(window.ethereum);
+      // Create ethers provider and signer from Web3-Onboard
+      const provider = new BrowserProvider(wallet.provider, 'any');
       const signer = await provider.getSigner();
       
       // Verify the connected address matches

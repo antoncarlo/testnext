@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
-import { useWallet } from './useWallet';
+import { useWalletImproved } from './useWalletImproved';
 
 export interface DefiStrategy {
   id: string;
@@ -28,7 +28,7 @@ export interface UserDefiPosition {
 
 export const useUserDefiPositions = () => {
   const { user } = useAuth();
-  const { address } = useWallet();
+  const { address } = useWalletImproved();
   const [positions, setPositions] = useState<UserDefiPosition[]>([]);
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState({

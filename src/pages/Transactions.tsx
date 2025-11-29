@@ -14,10 +14,10 @@ const Transactions = () => {
           <div className="absolute inset-0 venetian-pattern opacity-20"></div>
           <div className="relative z-10">
             <h1 className="text-4xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Cronologia Transazioni
+              Transaction History
             </h1>
             <p className="text-muted-foreground text-lg">
-              Visualizza tutte le tue transazioni e operazioni sulla piattaforma
+              View all your transactions and operations on the platform
             </p>
           </div>
         </div>

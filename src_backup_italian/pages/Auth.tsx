@@ -1,0 +1,405 @@
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { useConnectWallet } from '@web3-onboard/react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
+import { WalletConnect } from '@/components/WalletConnect';
+import { Loader2, Home } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { z } from 'zod';
+import bs58 from 'bs58';
+
+const emailSchema = z.string().email('Invalid email address');
+const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
+
+const Auth = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [walletLoading, setWalletLoading] = useState(false);
+  const [walletLoadingStep, setWalletLoadingStep] = useState('');
+  const [hasAttemptedAuth, setHasAttemptedAuth] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [referralCode, setReferralCode] = useState('');
+  const { signIn, signUp, signInWithWallet, user } = useAuth();
+  const [{ wallet }] = useConnectWallet();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  // Check for referral code in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      setReferralCode(ref);
+      toast({
+        title: 'Referral Code Applied',
+        description: `Using referral code: ${ref}`,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+  // Handle wallet authentication when wallet is connected
+  useEffect(() => {
+    if (wallet && !user && !walletLoading && !hasAttemptedAuth) {
+      setHasAttemptedAuth(true);
+      handleWalletAuth();
+    }
+  }, [wallet, user, walletLoading, hasAttemptedAuth]);
+
+  const validateEmail = () => {
+    try {
+      emailSchema.parse(email);
+      setEmailError('');
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setEmailError(error.issues[0].message);
+      }
+      return false;
+    }
+  };
+
+  const validatePassword = () => {
+    try {
+      passwordSchema.parse(password);
+      setPasswordError('');
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setPasswordError(error.issues[0].message);
+      }
+      return false;
+    }
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
+    
+    if (!isEmailValid || !isPasswordValid) return;
+
+    setLoading(true);
+    await signIn(email, password);
+    setLoading(false);
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
+    
+    if (!isEmailValid || !isPasswordValid) return;
+
+    setLoading(true);
+    const { error } = await signUp(email, password);
+    
+    if (!error && referralCode) {
+      // Apply referral code after signup
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data: { user: newUser } } = await supabase.auth.getUser();
+      
+      if (newUser) {
+        await supabase.rpc('handle_referral_signup', {
+          p_referee_id: newUser.id,
+          p_referral_code: referralCode,
+        });
+      }
+    }
+    
+    setLoading(false);
+  };
+
+  const handleWalletAuth = async () => {
+    if (!wallet || !wallet.accounts || wallet.accounts.length === 0) {
+      return;
+    }
+
+    setWalletLoading(true);
+    setWalletLoadingStep('Preparing authentication...');
+    
+    try {
+      const connectedAddress = wallet.accounts[0].address;
+      const chainId = wallet.chains[0].id;
+      
+      // Determine chain type based on chainId
+      let chain: 'base' | 'solana' = 'base';
+      const chainIdNum = parseInt(chainId, 16);
+      
+      // Base mainnet: 8453, Base Sepolia: 84532
+      if (chainIdNum === 8453 || chainIdNum === 84532) {
+        chain = 'base';
+      } else {
+        // For now, assume anything else is Solana (you can add more chain detection)
+        chain = 'solana';
+      }
+
+      // Create message to sign
+      setWalletLoadingStep('Waiting for signature...');
+      const timestamp = Date.now();
+      const message = `Sign this message to authenticate with NextBlock Re.\n\nWallet: ${connectedAddress}\nTimestamp: ${timestamp}`;
+
+      let signature = '';
+
+      // Request signature
+      try {
+        console.log('Requesting signature for chain:', chain);
+        console.log('Provider:', wallet.provider);
+        console.log('Message to sign:', message);
+        console.log('Wallet label:', wallet.label);
+        
+        if (chain === 'base') {
+          // Use EIP-1193 provider for EVM chains
+          const provider = wallet.provider;
+          
+          // Try personal_sign first (standard method)
+          try {
+            console.log('Attempting personal_sign with params:', [message, connectedAddress]);
+            
+            signature = await provider.request({
+              method: 'personal_sign',
+              params: [message, connectedAddress],
+            });
+            
+            console.log('✓ Signature received via personal_sign:', signature);
+          } catch (firstError: any) {
+            console.warn('personal_sign failed, trying with inverted params:', firstError.message);
+            
+            // Some wallets expect inverted parameter order
+            try {
+              signature = await provider.request({
+                method: 'personal_sign',
+                params: [connectedAddress, message],
+              });
+              
+              console.log('✓ Signature received via personal_sign (inverted params):', signature);
+            } catch (secondError: any) {
+              console.warn('personal_sign (inverted) failed, trying eth_sign:', secondError.message);
+              
+              // Last resort: try eth_sign
+              // Convert message to hex for eth_sign
+              const hexMessage = '0x' + Array.from(new TextEncoder().encode(message))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+              
+              signature = await provider.request({
+                method: 'eth_sign',
+                params: [connectedAddress, hexMessage],
+              });
+              
+              console.log('✓ Signature received via eth_sign:', signature);
+            }
+          }
+        } else {
+          // For Solana (if supported by the wallet)
+          const encodedMessage = new TextEncoder().encode(message);
+          const provider = wallet.provider;
+          const signedMessage = await provider.signMessage(encodedMessage, 'utf8');
+          signature = bs58.encode(signedMessage.signature);
+        }
+      } catch (signError: any) {
+        console.error('All signature methods failed:', signError);
+        if (signError.code === 4001 || signError.message?.includes('User rejected')) {
+          throw new Error('Signature request rejected. Please approve the signature to continue.');
+        }
+        throw new Error('Failed to sign message. Please try again.');
+      }
+
+      // Authenticate with backend
+      setWalletLoadingStep('Authenticating...');
+      await signInWithWallet(connectedAddress, signature, message, chain);
+      
+    } catch (error: any) {
+      console.error('Wallet auth error:', error);
+      toast({
+        title: 'Wallet Authentication Failed',
+        description: error.message || 'An unexpected error occurred. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setWalletLoading(false);
+      setWalletLoadingStep('');
+      setHasAttemptedAuth(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
+            NextBlock Re
+          </h1>
+          <p className="text-muted-foreground">Sign in to access your account</p>
+        </div>
+
+        <Card className="p-6">
+          <Tabs defaultValue="signin" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="signin">Sign In</TabsTrigger>
+              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="signin">
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div>
+                  <Label htmlFor="signin-email">Email</Label>
+                  <Input
+                    id="signin-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailError('');
+                    }}
+                    onBlur={validateEmail}
+                    disabled={loading}
+                  />
+                  {emailError && (
+                    <p className="text-sm text-destructive mt-1">{emailError}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="signin-password">Password</Label>
+                  <Input
+                    id="signin-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setPasswordError('');
+                    }}
+                    onBlur={validatePassword}
+                    disabled={loading}
+                  />
+                  {passwordError && (
+                    <p className="text-sm text-destructive mt-1">{passwordError}</p>
+                  )}
+                </div>
+
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Sign In
+                </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="signup">
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div>
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailError('');
+                    }}
+                    onBlur={validateEmail}
+                    disabled={loading}
+                  />
+                  {emailError && (
+                    <p className="text-sm text-destructive mt-1">{emailError}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="signup-password">Password</Label>
+                  <Input
+                    id="signup-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setPasswordError('');
+                    }}
+                    onBlur={validatePassword}
+                    disabled={loading}
+                  />
+                  {passwordError && (
+                    <p className="text-sm text-destructive mt-1">{passwordError}</p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Must be at least 6 characters
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="referral-code">
+                    Referral Code <span className="text-muted-foreground">(Optional)</span>
+                  </Label>
+                  <Input
+                    id="referral-code"
+                    type="text"
+                    placeholder="Enter referral code"
+                    value={referralCode}
+                    onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                    disabled={loading}
+                  />
+                  {referralCode && (
+                    <p className="text-xs text-green-500 mt-1">
+                      ✓ You'll receive 5% bonus points on your first deposit
+                    </p>
+                  )}
+                </div>
+
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Create Account
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+
+          <div className="relative my-6">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-sm text-muted-foreground">
+              Or connect wallet
+            </span>
+          </div>
+
+          {walletLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <Loader2 className="h-6 w-6 animate-spin mr-2" />
+              <span className="text-sm text-muted-foreground">{walletLoadingStep}</span>
+            </div>
+          ) : (
+            <WalletConnect />
+          )}
+        </Card>
+
+        <div className="text-center mt-6">
+          <Link to="/">
+            <Button variant="ghost" size="sm">
+              <Home className="h-4 w-4 mr-2" />
+              Back to Home
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Auth;

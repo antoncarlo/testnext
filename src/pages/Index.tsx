@@ -66,16 +66,16 @@ export default function Index() {
             </div>
             <div className="hidden md:flex items-center gap-8">
               <a href="#product" className="text-sm font-medium hover:text-primary transition-colors">
-                Prodotto
+                Product
               </a>
               <a href="#features" className="text-sm font-medium hover:text-primary transition-colors">
-                Caratteristiche
+                Features
               </a>
               <a href="#heritage" className="text-sm font-medium hover:text-primary transition-colors">
-                Storia
+                Heritage
               </a>
               <Button variant="default" className="bg-primary hover:bg-primary/90" onClick={handleGetStarted}>
-                Inizia Ora
+                Get Started
               </Button>
             </div>
           </div>
@@ -99,17 +99,17 @@ export default function Index() {
             <div className={`space-y-6 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <div className="inline-block px-4 py-2 bg-secondary/10 rounded-full border border-secondary/20">
                 <span className="text-sm font-medium text-secondary">
-                  Dalle origini veneziane dell'assicurazione
+                  From the Venetian origins of insurance
                 </span>
               </div>
               
               <h1 className="text-5xl md:text-7xl font-bold leading-tight text-foreground">
-                Tokenizza il Futuro dell'Assicurazione
+                Tokenize the Future of Insurance
               </h1>
               
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl">
-                Una piattaforma programmabile e utility-driven per la tokenizzazione di portafogli assicurativi, 
-                progettata per l'accumulo nativo di valore e l'integrazione seamless nel DeFi.
+                A programmable and utility-driven platform for tokenizing insurance portfolios, 
+                designed for native value accumulation and seamless DeFi integration.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -120,13 +120,13 @@ export default function Index() {
                 >
                   {isConnected ? (
                     <>
-                      Vai alla Dashboard
+                      Go to Dashboard
                       <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </>
                   ) : (
                     <>
                       <Wallet className="mr-2 w-4 h-4" />
-                      Connetti Wallet
+                      Connect Wallet
                     </>
                   )}
                 </Button>
@@ -135,14 +135,14 @@ export default function Index() {
                   variant="outline"
                   className="border-primary text-primary hover:bg-primary/5"
                 >
-                  Scopri di Più
+                  Learn More
                 </Button>
               </div>
 
               {/* Trust Indicators */}
               <div className="pt-8 border-t border-border">
                 <p className="text-sm text-muted-foreground mb-4">
-                  Supportato dalle migliori istituzioni
+                  Supported by leading institutions
                 </p>
                 <div className="flex items-center gap-6 opacity-60">
                   <span className="text-xs font-semibold tracking-wider">ETHEREUM</span>
@@ -195,6 +195,7 @@ export default function Index() {
             </div>
 
             {/* Right: Description */}
+
             <div className="scroll-animate order-1 lg:order-2">
               <div className="inline-block px-4 py-2 bg-secondary/10 rounded-full border border-secondary/20 mb-6">
                 <span className="text-sm font-medium text-secondary">
@@ -203,12 +204,12 @@ export default function Index() {
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                AMM Ottimizzato per Token Assicurativi
+                Optimized AMM for Insurance Tokens
               </h2>
               
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                Sperimenta integrazione seamless, tassi migliori e liquidità più profonda. 
-                Alimentato dal valore aggregato dei portafogli assicurativi tokenizzati.
+                Experience seamless integration, better rates, and deeper liquidity. 
+                Powered by the aggregated value of tokenized insurance portfolios.
               </p>
 
               <div className="space-y-4">
@@ -217,9 +218,9 @@ export default function Index() {
                     <div className="w-2 h-2 rounded-full bg-primary"></div>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Liquidità Profonda</h4>
+                    <h4 className="font-semibold mb-1">Deep Liquidity</h4>
                     <p className="text-muted-foreground text-sm">
-                      Pool aggregati da protocolli multipli per garantire sempre il miglior prezzo
+                      Aggregated pools from multiple protocols to ensure the best price
                     </p>
                   </div>
                 </div>
@@ -229,9 +230,9 @@ export default function Index() {
                     <div className="w-2 h-2 rounded-full bg-secondary"></div>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Slippage Minimale</h4>
+                    <h4 className="font-semibold mb-1">Minimal Slippage</h4>
                     <p className="text-muted-foreground text-sm">
-                      Algoritmo ottimizzato per ridurre lo slippage anche su volumi elevati
+                      Optimized algorithm to reduce slippage even on high volumes
                     </p>
                   </div>
                 </div>
@@ -243,7 +244,7 @@ export default function Index() {
                   <div>
                     <h4 className="font-semibold mb-1">Fee Competitive</h4>
                     <p className="text-muted-foreground text-sm">
-                      Commissioni ridotte grazie all'efficienza del protocollo NextBlock
+                      Reduced fees thanks to NextBlock protocol efficiency
                     </p>
                   </div>
                 </div>
@@ -258,10 +259,10 @@ export default function Index() {
         <div className="container mx-auto">
           <div className="text-center mb-16 scroll-animate">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Integrazione Seamless, Rendimenti Migliori
+              Seamless Integration, Better Yields
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              e liquidità più profonda per i portafogli assicurativi tokenizzati
+              and deeper liquidity for tokenized insurance portfolios
             </p>
           </div>
 
@@ -273,10 +274,10 @@ export default function Index() {
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <Ship className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Accumulo Utility-Driven</h3>
+                <h3 className="text-2xl font-bold mb-4">Utility-Driven Accumulation</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  I token NXB catturano valore dall'attività del protocollo. I possessori beneficiano 
-                  di integrazioni native e partecipazione alla rete.
+                  NXB tokens capture value from protocol activity. Holders benefit 
+                  from native integrations and network participation.
                 </p>
               </div>
               {/* Decorative engraving pattern */}
@@ -294,10 +295,10 @@ export default function Index() {
                 <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <Shield className="w-8 h-8 text-secondary" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Composabilità & Integrazione</h3>
+                <h3 className="text-2xl font-bold mb-4">Composability & Integration</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  I token sono nativamente accettati in pool di liquidità, vault e strategie DeFi. 
-                  Benefici potenziati quando utilizzi NXB attraverso piattaforme integrate.
+                  Tokens are natively accepted in liquidity pools, vaults, and DeFi strategies. 
+                  Enhanced benefits when using NXB across integrated platforms.
                 </p>
               </div>
               <img 
@@ -314,10 +315,10 @@ export default function Index() {
                 <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <Map className="w-8 h-8 text-accent" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Loop di Valore Community-Driven</h3>
+                <h3 className="text-2xl font-bold mb-4">Community-Driven Value Loop</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Più protocolli utilizzano NXB, più ricompense la rete può distribuire. 
-                  Un ecosistema che cresce con la partecipazione.
+                  The more protocols use NXB, the more rewards the network can distribute. 
+                  An ecosystem that grows with participation.
                 </p>
               </div>
               <img 
@@ -352,19 +353,19 @@ export default function Index() {
             <div className="scroll-animate text-white">
               <div className="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-6">
                 <span className="text-sm font-medium">
-                  Dalle origini a Venezia
+                  From Origins in Venice
                 </span>
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                L'Eredità dei Mercanti Veneziani
+                The Legacy of Venetian Merchants
               </h2>
               
               <p className="text-lg text-white/80 leading-relaxed mb-6">
-                Nel XV secolo, i mercanti veneziani inventarono le prime forme di assicurazione marittima 
-                per proteggere le loro navi cariche di spezie, seta e oro. Oggi, NextBlock porta questa 
-                tradizione nell'era blockchain, tokenizzando portafogli assicurativi con la stessa 
-                innovazione che rese Venezia la capitale finanziaria del mondo.
+                In the 15th century, Venetian merchants invented the first forms of maritime insurance 
+                to protect their ships loaded with spices, silk, and gold. Today, NextBlock brings this 
+                tradition into the blockchain era, tokenizing insurance portfolios with the same 
+                innovation that made Venice the financial capital of the world.
               </p>
 
               <div className="space-y-4">
@@ -373,7 +374,7 @@ export default function Index() {
                     <div className="w-2 h-2 rounded-full bg-accent"></div>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Sicurezza Istituzionale</h4>
+                    <h4 className="font-semibold mb-1">Institutional Security</h4>
                     <p className="text-white/70 text-sm">
                       Backed by diversified baskets of battle-tested stablecoins and RWA
                     </p>
@@ -385,7 +386,7 @@ export default function Index() {
                     <div className="w-2 h-2 rounded-full bg-accent"></div>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Liquidità Aggregata</h4>
+                    <h4 className="font-semibold mb-1">Aggregated Liquidity</h4>
                     <p className="text-white/70 text-sm">
                       Unified liquidity layer across protocols for deep, stable markets
                     </p>
@@ -397,7 +398,7 @@ export default function Index() {
                     <div className="w-2 h-2 rounded-full bg-accent"></div>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Casi d'Uso Reali</h4>
+                    <h4 className="font-semibold mb-1">Real Use Cases</h4>
                     <p className="text-white/70 text-sm">
                       Beyond trades—powering value storage, yield, and liquidity across DeFi
                     </p>
@@ -409,7 +410,7 @@ export default function Index() {
                 size="lg" 
                 className="mt-8 bg-white text-primary hover:bg-white/90"
               >
-                Scopri la Storia Completa
+                Discover the Full Story
               </Button>
             </div>
           </div>
@@ -420,11 +421,11 @@ export default function Index() {
       <section className="py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto text-center scroll-animate">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Pronto a Tokenizzare il Futuro?
+            Ready to Tokenize the Future?
           </h2>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            Unisciti alla rivoluzione della tokenizzazione assicurativa. 
-            Inizia oggi con NextBlock.
+            Join the insurance tokenization revolution. 
+            Start today with NextBlock.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
@@ -432,14 +433,14 @@ export default function Index() {
               className="bg-white text-primary hover:bg-white/90"
               onClick={handleGetStarted}
             >
-              Inizia Ora
+              Get Started Now
             </Button>
             <Button 
               size="lg" 
               variant="outline"
               className="border-white text-white hover:bg-white/10"
             >
-              Contatta il Team
+              Contact the Team
             </Button>
           </div>
         </div>
@@ -457,21 +458,21 @@ export default function Index() {
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Tokenizzazione assicurativa per l'era blockchain.
+                Insurance tokenization for the blockchain era.
               </p>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Prodotto</h4>
+              <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Piattaforma</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Token NXB</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Documentazione</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Platform</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">NXB Token</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Documentation</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Risorse</h4>
+              <h4 className="font-semibold mb-4">Resources</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#" className="hover:text-foreground transition-colors">Whitepaper</a></li>
                 <li><a href="#" className="hover:text-foreground transition-colors">Blog</a></li>
@@ -490,7 +491,7 @@ export default function Index() {
           </div>
 
           <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>© 2024 NextBlock. Dall'eredità veneziana alla blockchain del futuro.</p>
+            <p>© 2024 NextBlock. From Venetian legacy to the blockchain of the future.</p>
           </div>
         </div>
       </footer>

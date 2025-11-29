@@ -1,3 +1,4 @@
+```tsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePageView } from '@/hooks/useActivityLogger';
@@ -156,3 +157,4 @@ export default function Deposit() {
     </div>
   );
 }
+```

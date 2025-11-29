@@ -39,8 +39,8 @@ const Dashboard = () => {
       await navigator.clipboard.writeText(address);
       setCopied(true);
       toast({
-        title: 'Copiato!',
-        description: 'Indirizzo wallet copiato negli appunti',
+        title: 'Copied!',
+        description: 'Wallet address copied to clipboard',
       });
       setTimeout(() => setCopied(false), 2000);
     }
@@ -56,15 +56,15 @@ const Dashboard = () => {
             <div className="flex items-center gap-3 mb-3">
               <Ship className="w-8 h-8 text-accent" />
               <h1 className="text-4xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Benvenuto, Mercante
+                Welcome, Merchant
               </h1>
             </div>
             <p className="text-muted-foreground text-lg">
-              Gestisci i tuoi depositi e monitora i rendimenti con l'eleganza veneziana
+              Manage your deposits and monitor returns with Venetian elegance
             </p>
             {user && (
               <p className="text-sm text-muted-foreground mt-2">
-                Connesso come: <span className="font-semibold">{user.email}</span>
+                Connected as: <span className="font-semibold">{user.email}</span>
               </p>
             )}
             {isConnected && address && (
@@ -132,25 +132,25 @@ const Dashboard = () => {
                   <div className="flex items-center gap-2 mb-4">
                     <Coins className="w-5 h-5 text-accent" />
                     <h3 className="font-bold text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
-                      Come Funziona
+                      How It Works
                     </h3>
                   </div>
                   <ul className="space-y-3 text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <span className="text-accent font-bold text-base">1.</span>
-                      <span>Connetti il tuo wallet su Base Chain (MetaMask, Trust Wallet, WalletConnect)</span>
+                      <span>Connect your wallet on Base Chain (MetaMask, Trust Wallet, WalletConnect)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-accent font-bold text-base">2.</span>
-                      <span>Deposita ETH per iniziare a guadagnare punti</span>
+                      <span>Deposit ETH to start earning points</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-accent font-bold text-base">3.</span>
-                      <span>Guadagna 1000 punti per ogni ETH depositato</span>
+                      <span>Earn 1000 points for every ETH deposited</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-accent font-bold text-base">4.</span>
-                      <span>Scala i livelli: Bronzo → Argento → Oro → Platino → Diamante</span>
+                      <span>Level up: Bronze → Silver → Gold → Platinum → Diamond</span>
                     </li>
                   </ul>
                 </Card>
@@ -159,29 +159,29 @@ const Dashboard = () => {
                   <div className="flex items-center gap-2 mb-4">
                     <Trophy className="w-5 h-5 text-accent" />
                     <h3 className="font-bold text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
-                      Benefici per Livello
+                      Level Benefits
                     </h3>
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">🥉 Bronzo</span>
-                      <span className="font-semibold">0+ punti</span>
+                      <span className="text-muted-foreground">🥉 Bronze</span>
+                      <span className="font-semibold">0+ points</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">🥈 Argento</span>
-                      <span className="font-semibold">1,000+ punti</span>
+                      <span className="text-muted-foreground">🥈 Silver</span>
+                      <span className="font-semibold">1,000+ points</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">🥇 Oro</span>
-                      <span className="font-semibold">10,000+ punti</span>
+                      <span className="text-muted-foreground">🥇 Gold</span>
+                      <span className="font-semibold">10,000+ points</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">💎 Platino</span>
-                      <span className="font-semibold">50,000+ punti</span>
+                      <span className="text-muted-foreground">💎 Platinum</span>
+                      <span className="font-semibold">50,000+ points</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">💠 Diamante</span>
-                      <span className="font-semibold">100,000+ punti</span>
+                      <span className="text-muted-foreground">💠 Diamond</span>
+                      <span className="font-semibold">100,000+ points</span>
                     </div>
                   </div>
                 </Card>
@@ -202,10 +202,10 @@ const Dashboard = () => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle style={{ fontFamily: "'Playfair Display', serif" }}>
-                QR Code Indirizzo Wallet
+                Wallet Address QR Code
               </DialogTitle>
               <DialogDescription>
-                Scansiona questo QR code per ottenere l'indirizzo del wallet
+                Scan this QR code to get the wallet address
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col items-center gap-4 py-4">
@@ -222,12 +222,12 @@ const Dashboard = () => {
                 {copied ? (
                   <>
                     <Check className="h-4 w-4 mr-2 text-green-500" />
-                    Copiato!
+                    Copied!
                   </>
                 ) : (
                   <>
                     <Copy className="h-4 w-4 mr-2" />
-                    Copia Indirizzo
+                    Copy Address
                   </>
                 )}
               </Button>

@@ -1,4 +1,3 @@
-```tsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -82,7 +81,7 @@ export default function Portfolio() {
   };
 
   const truncateAddress = (addr: string) => {
-    return addr.slice(0, 6) + '...' + addr.slice(-6);
+    return `${addr.slice(0, 6)}...${addr.slice(-6)}`;
   };
 
   if (loading) {
@@ -214,4 +213,3 @@ export default function Portfolio() {
     </div>
   );
 }
-

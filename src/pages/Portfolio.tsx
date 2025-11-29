@@ -82,7 +82,7 @@ export default function Portfolio() {
   };
 
   const truncateAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-6)}`;
+    return addr.slice(0, 6) + '...' + addr.slice(-6);
   };
 
   if (loading) {

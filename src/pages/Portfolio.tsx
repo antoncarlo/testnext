@@ -211,7 +211,6 @@ export default function Portfolio() {
           </div>
         </div>
       </main>
-```
     </div>
   );
 }
